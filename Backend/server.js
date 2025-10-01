@@ -21,6 +21,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const settingRoutes = require('./routes/settingRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const mentalHealthRoutes = require('./routes/mentalHealthRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 
 // Initialize express app
 const app = express();
@@ -106,6 +107,7 @@ app.use('/api/user/profile', profileRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/mental-health', mentalHealthRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 // Config endpoint to serve environment URLs to frontend
 app.get('/api/config', (req, res) => {

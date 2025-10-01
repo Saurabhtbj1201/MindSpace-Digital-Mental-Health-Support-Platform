@@ -1031,7 +1031,7 @@
                 video = document.createElement('video');
                 video.className = 'resource-video';
                 video.controls = false;
-                video.muted = false; // Mute for autoplay compatibility
+                video.muted = true; // Mute for autoplay compatibility
                 video.loop = true;
                 video.preload = 'metadata';
                 video.style.cssText = 'width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;';

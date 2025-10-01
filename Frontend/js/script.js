@@ -1497,20 +1497,23 @@ function updateNavigation() {
     navLinks.innerHTML = '';
 
     if (authToken) {
-        // User is logged in, show only Home and Dashboard links
+        // User is logged in, show all navigation links
         navLinks.innerHTML = `
-                <li><a href="#home" ${window.location.hash === '#home' || window.location.hash === '' ? 'class="active"' : ''}>Home</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                `;
+            <li><a href="index.html" ${window.location.pathname === '/index.html' || window.location.pathname === '/' ? 'class="active"' : ''}>Home</a></li>
+            <li><a href="dashboard.html" ${window.location.pathname === '/dashboard.html' ? 'class="active"' : ''}>Dashboard</a></li>
+            <li><a href="AI-support.html" ${window.location.pathname === '/AI-support.html' ? 'class="active"' : ''}>AI-Support</a></li>
+            <li><a href="mental-home.html" ${window.location.pathname === '/mental-home.html' ? 'class="active"' : ''}>Mental Health</a></li>
+            <li><a href="appointment.html" ${window.location.pathname === '/appointment.html' ? 'class="active"' : ''}>Appointment</a></li>
+        `;
     } else {
         // User is not logged in, show default navigation
         navLinks.innerHTML = `
-                <li><a href="#home" ${window.location.hash === '#home' || window.location.hash === '' ? 'class="active"' : ''}>Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#resources">Resources</a></li>
-                <li><a href="#statistics">Statistics</a></li>
-                    `;
+            <li><a href="#home" ${window.location.hash === '#home' || window.location.hash === '' ? 'class="active"' : ''}>Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#statistics">Statistics</a></li>
+        `;
     }
 }
 function updateHeaderForLoggedInUser(userData) {
