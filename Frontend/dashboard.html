@@ -73,7 +73,7 @@
                         <a href="profile.html" class="dropdown-item">
                             <i class="fas fa-user"></i> Profile
                         </a>
-                        <a href="#settings" class="dropdown-item">
+                        <a href="settings.html" class="dropdown-item">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                         <div class="dropdown-divider"></div>
@@ -111,38 +111,39 @@
                 <div class="dashboard-card">
                     <h3><i class="fas fa-clipboard-list"></i> Daily Check-in</h3>
                     <p>Track your mood and mental wellbeing with our daily check-in tool.</p>
-                    <button class="btn-primary">Start Check-in</button>
+                    <button class="btn-primary" onclick="window.location.href='mood.html'">Start Check-in</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-robot"></i> AI Support</h3>
+                    <p>Get instant support from our AI-powered mental health assistant.</p>
+                    <button class="btn-primary" onclick="window.location.href='AI-support.html'">Chat Now</button>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-heart"></i> Mental Health</h3>
+                    <p>Access comprehensive mental health resources and assessments.</p>
+                    <button class="btn-primary" onclick="window.location.href='mental-home.html'">Explore</button>
                 </div>
                 
                 <div class="dashboard-card">
                     <h3><i class="fas fa-calendar-alt"></i> Appointments</h3>
                     <p>Schedule confidential sessions with mental health professionals.</p>
-                    <button class="btn-primary">Book Session</button>
-                </div>
-                
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-users"></i> Support Groups</h3>
-                    <p>Connect with peers facing similar challenges in a safe environment.</p>
-                    <button class="btn-primary">Join Group</button>
-                </div>
-                
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-book-reader"></i> Learning Center</h3>
-                    <p>Access educational resources about mental health and wellness.</p>
-                    <button class="btn-primary">Explore</button>
-                </div>
-                
-                <div class="dashboard-card">
-                    <h3><i class="fas fa-chart-line"></i> Progress Tracker</h3>
-                    <p>Monitor your mental wellness journey over time with detailed insights.</p>
-                    <button class="btn-primary">View Progress</button>
+                    <button class="btn-primary" onclick="window.location.href='appointment.html'">Book Session</button>
                 </div>
                 
                 <div class="dashboard-card">
                     <h3><i class="fas fa-cog"></i> Account Settings</h3>
                     <p>Manage your profile, notifications, and privacy preferences.</p>
-                    <button class="btn-primary">Settings</button>
+                    <button class="btn-primary" onclick="window.location.href='settings.html'">Settings</button>
                 </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-user"></i> Profile</h3>
+                    <p>View and update your personal information and preferences.</p>
+                    <button class="btn-primary" onclick="window.location.href='profile.html'">View Profile</button>
+                </div>
+                
             </div>
         </div>
     </section>

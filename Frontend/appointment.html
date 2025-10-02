@@ -43,7 +43,7 @@
                         <a href="profile.html" class="dropdown-item">
                             <i class="fas fa-user"></i> Profile
                         </a>
-                        <a href="#settings" class="dropdown-item">
+                        <a href="settings.html" class="dropdown-item">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                         <div class="dropdown-divider"></div>
@@ -439,8 +439,92 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="js/script.js"></script>
     <script src="js/appointment.js"></script>
+    <script>
+        // Initialize authentication and user interface
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                // Redirect to login page if not logged in
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Get user data from localStorage
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            // Update user information in the UI
+            if (userData) {
+                const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
+                
+                // Update header profile dropdown
+                const headerUsername = document.getElementById('header-username');
+                const headerAvatar = document.getElementById('header-avatar');
+                
+                if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
+                if (headerAvatar) headerAvatar.textContent = initials || 'U';
+            }
+            
+            // Toggle profile dropdown
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            if (profileTrigger && profileDropdown) {
+                profileTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Handle logout
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Clear authentication data
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userData');
+                    
+                    // Show success notification
+                    if (typeof showSuccess === 'function') {
+                        showSuccess('Logged out successfully!');
+                    }
+                    
+                    // Redirect to home page after short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                });
+            }
+            
+            // Handle mood tracker button click
+            const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
+            if (moodTrackerBtn) {
+                moodTrackerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Redirect to mood tracking page
+                    window.location.href = 'mood.html';
+                });
+            }
+            
+            // Check and update mood button if function exists
+            if (typeof checkAndUpdateMoodButton === 'function') {
+                checkAndUpdateMoodButton();
+            }
+        });
+    </script>
 </body>
 
 </html>
