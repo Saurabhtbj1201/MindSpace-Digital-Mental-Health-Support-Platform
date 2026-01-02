@@ -1,23 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        // Redirect to login page if not logged in
-        window.location.href = 'index.html';
-        return;
-    }
+    // Check authentication - redirect if not logged in
+    if (!requireAuth()) return;
     
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    // Initialize user profile in header
+    initializeUserProfile();
+    setupLogoutHandler('logout-btn', typeof showSuccess !== 'undefined' ? showSuccess : null);
     
-    // Update profile information
-    updateProfileInfo(userData);
-    
-    // Set up authentication header for API requests
-    const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
+    // Get authentication headers for API requests
+    const headers = getAuthHeaders();
     
     // Elements for AI mood detection
     const video = document.getElementById('video');
@@ -45,22 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let moodChart = null;
     let filteredMoodHistory = [];
     
-    // Emoji map for moods
-    const moodEmojis = {
-        'Angry': '😠',
-        'Disgust': '🤢',
-        'Fear': '😨',
-        'Happy': '😄',
-        'Neutral': '😐',
-        'Sad': '😢',
-        'Surprise': '😲'
-    };
-    
-    // API Configuration - will be loaded from server
-    let apiConfig = {
-        backendApiUrl: 'http://localhost:5001', // Default fallback
-        mlServiceUrl: 'http://localhost:5000/predict_emotion' // Default fallback
-    };
+    // API Configuration
+    const apiConfig = getApiConfig();
     
     // Initialize the page
     initializePage();
@@ -102,9 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to initialize the page
     async function initializePage() {
-        // Load API configuration from frontend environment config
-        loadApiConfig();
-        
         // Check if user has recently tracked their mood
         checkRecentMood();
         
@@ -113,61 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initialize chart
         initMoodChart();
-    }
-    
-    // Function to load API configuration from frontend environment config
-    function loadApiConfig() {
-        if (window.ENV_CONFIG) {
-            apiConfig.backendApiUrl = window.ENV_CONFIG.backendApiUrl;
-            apiConfig.mlServiceUrl = window.ENV_CONFIG.mlServiceUrl;
-            console.log('API configuration loaded from environment:', apiConfig);
-        } else {
-            console.warn('Environment config not available, using defaults:', apiConfig);
-        }
-    }
-    
-    // Function to update profile information
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
-            
-            profileTrigger.addEventListener('click', function() {
-                profileDropdown.classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
     }
     
     // Function to check if user has recently tracked their mood
@@ -193,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update the mood tracker button with current mood
     function updateMoodTrackerButton(moodData) {
         const moodTrackerBtn = document.getElementById('mood-tracker-btn');
-        const emoji = moodEmojis[moodData.label] || '📊';
+        const emoji = getMoodEmoji(moodData.label);
         // Only change content, not size
         moodTrackerBtn.innerHTML = `
             <span class="mood-emoji">${emoji}</span> Mood: <strong>${moodData.label}</strong>

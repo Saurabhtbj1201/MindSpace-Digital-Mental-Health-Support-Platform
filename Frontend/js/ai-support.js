@@ -1,28 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'index.html';
-        return;
-    }
+    // Check authentication - redirect if not logged in
+    if (!requireAuth()) return;
     
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
-    // Update profile information
-    updateProfileInfo(userData);
+    // Initialize user profile in header
+    initializeUserProfile();
     
     // Set up authentication header for API requests
-    const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
+    const headers = getAuthHeaders();
     
     // API Configuration
-    const apiConfig = window.ENV_CONFIG || {
-        backendApiUrl: 'http://localhost:5001',
-        mlServiceUrl: 'http://localhost:5000/predict_emotion'
-    };
+    const apiConfig = getApiConfig();
     
     // DOM Elements
     const chatMessages = document.getElementById('chat-messages');
@@ -81,31 +68,21 @@ document.addEventListener('DOMContentLoaded', function() {
         setupSpeechFeatures();
     }
     
-    // Function to update profile information
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                localStorage.removeItem('ai_conversation_history');
+    // Custom logout handler for ai-support.js (also clears conversation history)
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('ai_conversation_history');
+            if (typeof showSuccess !== 'undefined') {
                 showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
+            }
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        });
     }
     
     // Function to check mood status

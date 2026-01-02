@@ -1,29 +1,17 @@
 // Settings Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'index.html';
-        return;
-    }
+    // Check authentication - redirect if not logged in
+    if (!requireAuth()) return;
     
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
-    // Update profile information in header
-    updateProfileInfo(userData);
+    // Initialize user profile in header
+    initializeUserProfile();
+    setupLogoutHandler('logout-btn', typeof showSuccess !== 'undefined' ? showSuccess : null);
     
     // Set up authentication header for API requests
-    const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
+    const headers = getAuthHeaders();
     
     // API Configuration
-    const apiConfig = window.ENV_CONFIG || {
-        backendApiUrl: 'http://localhost:5001',
-        mlServiceUrl: 'http://localhost:5000/predict_emotion'
-    };
+    const apiConfig = getApiConfig();
     
     // Initialize the page
     initializePage();
@@ -35,39 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setupModalHandlers();
     }
     
-    // Function to update profile information in header
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    }
-    
     // Function to load account information
     async function loadAccountInfo() {
+        const userData = getUserData();
         try {
             const apiUrl = `${apiConfig.backendApiUrl}/api/settings/account-info`;
             const response = await fetch(apiUrl, {
@@ -83,11 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.warn('Could not load account information');
                 // Fallback to localStorage data
-                populateBasicAccountInfo();
+                populateBasicAccountInfo(userData);
             }
         } catch (error) {
             console.error('Error loading account info:', error);
-            populateBasicAccountInfo();
+            populateBasicAccountInfo(userData);
         }
     }
     
@@ -111,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Function to populate basic account info from localStorage
-    function populateBasicAccountInfo() {
+    function populateBasicAccountInfo(userData) {
         document.getElementById('current-email').textContent = userData.email || 'Not available';
         document.getElementById('current-email-input').value = userData.email || '';
         document.getElementById('account-created').textContent = 'Not available';

@@ -1,34 +1,21 @@
 // Profile Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        // Redirect to login page if not logged in
-        window.location.href = 'index.html';
-        return;
-    }
+    // Check authentication - redirect if not logged in
+    if (!requireAuth()) return;
     
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
-    // Update profile information
-    updateProfileInfo(userData);
+    // Initialize user profile in header
+    initializeUserProfile();
+    setupLogoutHandler('logout-btn', typeof showSuccess !== 'undefined' ? showSuccess : null);
     
     // Set up authentication header for API requests
-    const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
+    const headers = getAuthHeaders();
     
     // Profile state management
     let isEditMode = false;
     let originalData = {};
     
-    // API Configuration - use environment config
-    const apiConfig = window.ENV_CONFIG || {
-        backendApiUrl: 'http://localhost:5001',
-        mlServiceUrl: 'http://localhost:5000/predict_emotion'
-    };
+    // API Configuration
+    const apiConfig = getApiConfig();
     
     // Initialize the page
     initializePage();
@@ -51,19 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
                 if (moodTrackerBtn) {
                     const moodData = data.data;
-                    
-                    // Emoji map for moods
-                    const moodEmojis = {
-                        'Angry': '😠',
-                        'Disgust': '🤢',
-                        'Fear': '😨',
-                        'Happy': '😄',
-                        'Neutral': '😐',
-                        'Sad': '😢',
-                        'Surprise': '😲'
-                    };
-                    
-                    const emoji = moodEmojis[moodData.label] || '📊';
+                    const emoji = getMoodEmoji(moodData.label);
                     
                     moodTrackerBtn.innerHTML = `
                         <span style="font-size: 16px;">${emoji}</span> ${moodData.label}
@@ -96,43 +71,16 @@ document.addEventListener('DOMContentLoaded', function() {
         setupEditMode();
     }
     
-    // Function to update profile information in header
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Update welcome message
-            document.getElementById('welcome-message').textContent = `👋 Hi, Welcome ${userData.firstName || 'User'}!`;
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    }
-    
     // Function to load user profile data
     async function loadUserProfile() {
+        const userData = getUserData();
+        
+        // Update welcome message with user's first name
+        const welcomeMessage = document.getElementById('welcome-message');
+        if (welcomeMessage) {
+            welcomeMessage.textContent = `👋 Hi, Welcome ${userData.firstName || 'User'}!`;
+        }
+        
         try {
             // First populate with basic user data from localStorage
             populateBasicInfo(userData);

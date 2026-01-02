@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Profile = require('../models/Profile');
+const { sendSuccess, sendError, handleError, sendNotFound } = require('../utils/responseHandler');
 
 // @desc    Get user profile
 // @route   GET /api/user/profile
@@ -12,28 +13,19 @@ const getProfile = async (req, res) => {
         if (!profile) {
             // If no profile exists, return basic user data
             const user = await User.findById(req.user.id).select('-password');
-            return res.status(200).json({
-                success: true,
+            return sendSuccess(res, 200, {
                 profile: {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
                     dob: user.dob
-                },
-                message: 'Profile not found, returning basic user data'
-            });
+                }
+            }, 'Profile not found, returning basic user data');
         }
 
-        res.status(200).json({
-            success: true,
-            profile
-        });
+        return sendSuccess(res, 200, { profile });
     } catch (error) {
-        console.error('Error fetching profile:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error'
-        });
+        return handleError(res, error, 'fetching profile');
     }
 };
 
@@ -74,29 +66,9 @@ const updateProfile = async (req, res) => {
             await User.findByIdAndUpdate(req.user.id, userUpdateData);
         }
 
-        res.status(200).json({
-            success: true,
-            profile,
-            userData: userUpdateData,
-            message: 'Profile updated successfully'
-        });
+        return sendSuccess(res, 200, { profile, userData: userUpdateData }, 'Profile updated successfully');
     } catch (error) {
-        console.error('Error updating profile:', error);
-        
-        if (error.name === 'ValidationError') {
-            const errors = Object.values(error.errors).map(err => err.message);
-            return res.status(400).json({
-                success: false,
-                message: 'Validation Error',
-                errors
-            });
-        }
-        
-        res.status(500).json({
-            success: false,
-            message: 'Server error',
-            error: error.message
-        });
+        return handleError(res, error, 'updating profile');
     }
 };
 
@@ -139,10 +111,7 @@ const getProfileCompletion = async (req, res) => {
         const profile = await Profile.findOne({ user: req.user.id });
         
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
+            return sendNotFound(res, 'User not found');
         }
 
         console.log('User found:', user.email);
@@ -208,23 +177,16 @@ const getProfileCompletion = async (req, res) => {
             missingFields: missingFields.length
         });
 
-        res.status(200).json({
-            success: true,
+        return sendSuccess(res, 200, {
             isComplete,
             completionPercentage,
             completedFields: Object.keys(requiredFields).length - missingFields.length,
             totalFields: Object.keys(requiredFields).length,
-            missingFields, // For debugging purposes
-            message: isComplete ? 'Profile is complete' : 'Profile needs more information'
-        });
+            missingFields // For debugging purposes
+        }, isComplete ? 'Profile is complete' : 'Profile needs more information');
 
     } catch (error) {
-        console.error('Error checking profile completion:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error',
-            error: error.message
-        });
+        return handleError(res, error, 'checking profile completion');
     }
 };
 
