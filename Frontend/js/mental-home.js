@@ -1,70 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'index.html';
-        return;
-    }
+    // Check authentication - redirect if not logged in
+    if (!requireAuth()) return;
 
     // API configuration
-    const apiConfig = {
-        backendApiUrl: window.ENV_CONFIG?.backendApiUrl || 'http://localhost:5001'
-    };
+    const apiConfig = getApiConfig();
 
     // Headers for API requests
-    const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
+    const headers = getAuthHeaders();
 
     // Initialize page
     initializePage();
 
     async function initializePage() {
-        updateUserProfile();
+        initializeUserProfile();
         setupEventListeners();
         await checkPrerequisites();
         await loadAssessmentHistory();
-    }
-
-    function updateUserProfile() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-        }
-        setupProfileDropdown();
-    }
-
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        if (profileTrigger) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-        }
-
-        document.addEventListener('click', (event) => {
-            if (profileTrigger && profileDropdown && !profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
     }
 
     function setupEventListeners() {

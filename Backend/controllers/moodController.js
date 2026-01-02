@@ -1,6 +1,7 @@
 const Mood = require('../models/Mood');
 const axios = require('axios');
 const FormData = require('form-data');
+const { sendSuccess, sendCreated, handleError } = require('../utils/responseHandler');
 
 // Save mood (manually or from ML prediction)
 exports.saveMood = async (req, res) => {
@@ -16,17 +17,9 @@ exports.saveMood = async (req, res) => {
       capturedVia: capturedVia || 'manual'
     });
     
-    res.status(201).json({
-      success: true,
-      data: mood
-    });
+    return sendCreated(res, { data: mood }, 'Mood saved successfully');
   } catch (error) {
-    console.error('Error saving mood:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Could not save mood data',
-      error: error.message
-    });
+    return handleError(res, error, 'saving mood');
   }
 };
 
@@ -47,20 +40,14 @@ exports.getMoodHistory = async (req, res) => {
     // Get total count for pagination
     const total = await Mood.countDocuments({ user: req.user.id });
     
-    res.status(200).json({
-      success: true,
+    return sendSuccess(res, 200, {
       count: moods.length,
       total,
       pages: Math.ceil(total / limit),
       data: moods
     });
   } catch (error) {
-    console.error('Error fetching mood history:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Could not retrieve mood history',
-      error: error.message
-    });
+    return handleError(res, error, 'fetching mood history');
   }
 };
 
@@ -71,10 +58,7 @@ exports.getRecentMood = async (req, res) => {
       .sort({ createdAt: -1 });
     
     if (!recentMood) {
-      return res.status(404).json({
-        success: false,
-        message: 'No mood entries found'
-      });
+      return sendSuccess(res, 200, { data: null, isRecent: false });
     }
     
     // Check if mood was recorded within the last 2 hours
@@ -83,18 +67,9 @@ exports.getRecentMood = async (req, res) => {
     
     const isRecent = recentMood.createdAt > twoHoursAgo;
     
-    res.status(200).json({
-      success: true,
-      data: recentMood,
-      isRecent
-    });
+    return sendSuccess(res, 200, { data: recentMood, isRecent });
   } catch (error) {
-    console.error('Error fetching recent mood:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Could not retrieve recent mood',
-      error: error.message
-    });
+    return handleError(res, error, 'fetching recent mood');
   }
 };
 

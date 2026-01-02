@@ -197,19 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update user profile information
     const updateUserProfile = () => {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const headerUsername = document.getElementById('header-username');
-        const headerAvatar = document.getElementById('header-avatar');
-        
-        if (userData && headerUsername && headerAvatar) {
-            const firstName = userData.firstName || '';
-            const lastName = userData.lastName || '';
-            const fullName = `${firstName} ${lastName}`.trim();
-            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
-            
-            headerUsername.textContent = firstName || 'User';
-            headerAvatar.textContent = initials || 'U';
-        }
+        initializeUserProfile();
     };
     
     const setupEventListeners = () => {
@@ -218,37 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (searchFilter) searchFilter.addEventListener('input', debounce(applyFilters, 300));
         if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearFilters);
         
-        setupProfileDropdown();
-    };
-
-    const setupProfileDropdown = () => {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-        
-        if (profileTrigger) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-        }
-        
-        document.addEventListener('click', (event) => {
-            if (profileTrigger && profileDropdown && !profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-        
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                console.log('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
+        // Setup logout handler
+        setupLogoutHandler('logout-btn');
     };
     
     const setupMoodTrackerButton = () => {
