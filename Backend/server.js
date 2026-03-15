@@ -32,13 +32,11 @@ app.use(express.json());
 // Configure CORS to allow requests from multiple frontend origins
 const corsOptions = {
   origin: function(origin, callback) {
-    // Allow requests from these origins
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://127.0.0.1:5500',
-      'https://mind-space-beryl.vercel.app'  // Your production Vercel URL
-    ];
-    
+    // Read allowed origins from .env (comma-separated), fallback to localhost
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : ['http://localhost:3000'];
+
     // Allow requests with no origin (like mobile apps, curl, etc.)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
