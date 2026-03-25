@@ -1,5 +1,9 @@
 const User = require('../models/User');
 const Profile = require('../models/Profile');
+const Mood = require('../models/Mood');
+const Conversation = require('../models/Conversation');
+const MentalHealthReport = require('../models/MentalHealthReport');
+const Appointment = require('../models/appointmentModel');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
@@ -335,11 +339,14 @@ const deleteAccount = async (req, res) => {
             });
         }
 
-        // Delete user's profile
-        await Profile.findOneAndDelete({ user: user._id });
-
-        // Delete any other related data here (mood entries, etc.)
-        // TODO: Add cleanup for other collections
+        // Delete all user-related data across collections
+        await Promise.all([
+            Profile.deleteOne({ user: user._id }),
+            Mood.deleteMany({ user: user._id }),
+            Conversation.deleteMany({ user: user._id }),
+            MentalHealthReport.deleteMany({ user: user._id }),
+            Appointment.deleteMany({ user: user._id }),
+        ]);
 
         // Delete user account
         await User.findByIdAndDelete(user._id);
