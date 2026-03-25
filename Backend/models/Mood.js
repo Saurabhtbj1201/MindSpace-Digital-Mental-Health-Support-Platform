@@ -36,6 +36,6 @@ const MoodSchema = new mongoose.Schema({
 // Index for querying recent moods efficiently
 MoodSchema.index({ user: 1, createdAt: -1 });
 
-const Mood = mongoose.model('Mood', MoodSchema);
+const Mood = mongoose.models.Mood || mongoose.model('Mood', MoodSchema);
 
 module.exports = Mood;

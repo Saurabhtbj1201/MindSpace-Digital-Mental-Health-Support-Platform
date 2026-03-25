@@ -173,6 +173,6 @@ const MentalHealthReportSchema = new mongoose.Schema({
 // Index for efficient querying
 MentalHealthReportSchema.index({ user: 1, createdAt: -1 });
 
-const MentalHealthReport = mongoose.model('MentalHealthReport', MentalHealthReportSchema);
+const MentalHealthReport = mongoose.models.MentalHealthReport || mongoose.model('MentalHealthReport', MentalHealthReportSchema);
 
 module.exports = MentalHealthReport;

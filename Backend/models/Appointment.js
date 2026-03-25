@@ -157,4 +157,4 @@ appointmentSchema.index({ status: 1 });
 // Ensure unique bookingId index exists
 appointmentSchema.index({ bookingId: 1 }, { unique: true });
 
-module.exports = mongoose.model('Appointment', appointmentSchema);
+module.exports = mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);

@@ -121,6 +121,6 @@ ProfileSchema.pre('save', function(next) {
 // Index for efficient querying
 ProfileSchema.index({ user: 1 });
 
-const Profile = mongoose.model('Profile', ProfileSchema);
+const Profile = mongoose.models.Profile || mongoose.model('Profile', ProfileSchema);
 
 module.exports = Profile;

@@ -48,6 +48,6 @@ ConversationSchema.index({ user: 1, type: 1 });
 // Auto-delete conversations older than 90 days
 ConversationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 90 * 24 * 60 * 60 });
 
-const Conversation = mongoose.model('Conversation', ConversationSchema);
+const Conversation = mongoose.models.Conversation || mongoose.model('Conversation', ConversationSchema);
 
 module.exports = Conversation;

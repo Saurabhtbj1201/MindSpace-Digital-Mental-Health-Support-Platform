@@ -3,7 +3,7 @@ const Profile = require('../models/Profile');
 const Mood = require('../models/Mood');
 const Conversation = require('../models/Conversation');
 const MentalHealthReport = require('../models/MentalHealthReport');
-const Appointment = require('../models/appointmentModel');
+const Appointment = require('../models/Appointment');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 
