@@ -29,8 +29,8 @@
                 </div>
                 <div class="dropdown-menu" id="profile-dropdown">
                     <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
-                    <a href="settings.html" class="dropdown-item"><i class="fas fa-cog"></i> Setting</a>
-                    <a href="index.html#faq" class="dropdown-item"><i class="fas fa-question-circle"></i> Faq</a>
+                    <a href="settings.html" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="faq.html" class="dropdown-item"><i class="fas fa-question-circle"></i> FAQ</a>
                     <a href="about.html" class="dropdown-item"><i class="fas fa-info-circle"></i> About</a>
                     <a href="team.html" class="dropdown-item"><i class="fas fa-users"></i> Team</a>
                     <div class="dropdown-divider"></div>
