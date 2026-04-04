@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Primary Meta Tags -->
-    <meta name="description" content="MindSpace Mood Tracker - Track your daily emotional wellbeing and discover patterns to improve your mental health.">
-    <meta name="keywords" content="mood tracker, emotion tracking, mental health, student wellness, daily mood log">
-    <meta name="author" content="MindSpace Warriors">
-    <meta name="robots" content="noindex, nofollow"> <!-- Protected page -->
-    <meta name="theme-color" content="#6A0DAD">
-    
-    <!-- Security Meta Tags -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="images/ico.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/ico.png">
-    <link rel="manifest" href="images/favicon/site.webmanifest">
-    
-    <!-- Mobile App Capability -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- Authentication Required -->
-    <meta name="auth-required" content="true">
-    
-    <title>MindSpace - Mood Tracker</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/mood.css">
+    <title>MindSpace - Book Your Mental Health Appointment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/appointment.css">
 </head>
+
 <body>
-    <!-- Add notification container -->
-    <div class="notifications-container" id="notifications-container"></div>
-    
-    <!-- Header Section -->
     <header>
         <div class="container">
             <div class="logo">
@@ -56,17 +26,13 @@
                     <li><a href="AI-support.html">AI-Support</a></li>
                     <li><a href="mental-home.html">Mental Health</a></li>
                     <li><a href="appointment.html">Appointment</a></li>
-                    <li><a href="#mood" class="active">Mood Tracker</a></li>
                 </ul>
             </nav>
             <div style="display: flex; gap: 15px; align-items: center;">
-                <div id="mood-tracker-container">
-                    <button class="mood-tracker-btn" id="mood-tracker-btn">
-                        <i class="fas fa-chart-line"></i> Track Your Mood
-                    </button>
-                </div>
-                
-                <!-- User profile dropdown -->
+                <button class="mood-tracker-btn">
+                    <i class="fas fa-chart-line"></i> Track Your Mood
+                </button>
+                <!-- Replace logout button with user profile dropdown -->
                 <div class="user-profile-dropdown">
                     <div class="profile-trigger" id="profile-trigger">
                         <div class="avatar-circle" id="header-avatar">U</div>
@@ -77,7 +43,7 @@
                         <a href="profile.html" class="dropdown-item">
                             <i class="fas fa-user"></i> Profile
                         </a>
-                        <a href="#setting.html" class="dropdown-item">
+                        <a href="settings.html" class="dropdown-item">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                         <div class="dropdown-divider"></div>
@@ -94,8 +60,332 @@
             </div>
         </div>
     </header>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Expert Mental Health Care When You Need It Most</h1>
+                <p class="subtitle">Connect with certified therapists and counselors through our secure platform. Get professional mental health support with easy online booking and personalized care plans.</p>
 
-    
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <i class="fas fa-user-md"></i>
+                        <span>Licensed Professionals</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>100% Confidential</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-video"></i>
+                        <span>Online & In-Person</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-clock"></i>
+                        <span>24/7 Support Available</span>
+                    </div>
+                </div>
+
+                <button class="hero-cta" onclick="document.querySelector('.booking-section').scrollIntoView({behavior: 'smooth'})">
+                    <i class="fas fa-calendar-plus"></i>
+                    Book Appointment Now
+                </button>
+            </div>
+
+            <div class="hero-image">
+                <div class="hero-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>Your Mental Wellness Matters</h3>
+                    <p>Professional care tailored to your unique needs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Happy Patients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Expert Therapists</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-number">25,000+</div>
+                    <div class="stat-label">Sessions Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-number">4.9/5</div>
+                    <div class="stat-label">Patient Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="booking-section">
+        <div class="appointment-container">
+            <div class="section-header">
+                <h2 class="section-title">Book Your Consultation</h2>
+                <p class="section-subtitle">Choose from our team of experienced mental health professionals and schedule your appointment at your convenience</p>
+            </div>
+
+            <div class="booking-flow">
+                <div class="specialist-section">
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="all">
+                            <i class="fas fa-th"></i> All Specialists
+                        </button>
+                        <button class="filter-btn" data-filter="stress">
+                            <i class="fas fa-brain"></i> Anxiety & Stress
+                        </button>
+                        <button class="filter-btn" data-filter="relationships">
+                            <i class="fas fa-heart"></i> Relationships
+                        </button>
+                        <button class="filter-btn" data-filter="depression">
+                            <i class="fas fa-sun"></i> Depression
+                        </button>
+                        <button class="filter-btn" data-filter="trauma">
+                            <i class="fas fa-hand-holding-heart"></i> Trauma Recovery
+                        </button>
+                    </div>
+
+                    <div class="specialists-grid" id="specialistsGrid">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="booking-sidebar">
+                    <div class="booking-header">
+                        <h3 class="booking-title">Book Your Session</h3>
+                        <p class="booking-subtitle">Select a specialist to continue</p>
+                    </div>
+
+                    <div class="selected-specialist" id="selectedSpecialist">
+                        <div class="selected-header">
+                            <div class="selected-avatar" id="selectedAvatar"></div>
+                            <div class="selected-info">
+                                <h4 id="selectedName"></h4>
+                                <div class="selected-role" id="selectedRole"></div>
+                            </div>
+                        </div>
+                        <div id="selectedTimeSlot" style="color: var(--gray-500); font-size: 0.85rem; text-align: center; margin-top: 0.75rem;">
+                            Select your preferred appointment time
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-alt"></i> Select Date
+                        </label>
+                        <select class="form-select" id="datePicker">
+                            <option value="">Choose a date</option>
+                        </select>
+                    </div>
+
+                    <!-- Add Counseling Type Selection -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-video"></i> Counseling Type
+                        </label>
+                        <select class="form-select" id="counselingType" required>
+                            <option value="">Select counseling type</option>
+                            <option value="video-call">Video Call</option>
+                            <option value="phone-call">Phone Call</option>
+                            <option value="in-office">In-Office Visit</option>
+                        </select>
+                    </div>
+
+                    <div class="time-slots-container">
+                        <div class="time-slots-title">
+                            <i class="fas fa-clock"></i> Available Time Slots
+                        </div>
+                        <div class="time-slots" id="timeSlots">
+                            <div style="text-align: center; color: var(--gray-400); padding: 2rem; font-style: italic; grid-column: 1 / -1;">
+                                <i class="fas fa-user-clock" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; display: block;"></i>
+                                <div style="font-size: 0.9rem;">Select a specialist to view available times</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="booking-summary">
+                        <div class="summary-title">
+                            <i class="fas fa-receipt"></i> Appointment Summary
+                        </div>
+                        <div class="summary-item">
+                            <span>Consultation Fee</span>
+                            <span class="summary-value">₹1,500</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Platform Fee</span>
+                            <span class="summary-value">₹0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Amount</span>
+                            <span class="summary-value">₹1,500</span>
+                        </div>
+                    </div>
+
+                    <button class="book-btn" id="bookBtn" disabled>
+                        <i class="fas fa-lock"></i>
+                        Complete Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-check-circle" style="color: var(--success-green); margin-right: 0.5rem;"></i> Confirm Appointment
+                </h2>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="confirmation-card">
+                    <div class="success-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Appointment Confirmed!</h3>
+                    <p>Your session has been successfully booked with our specialist.</p>
+
+                    <div class="confirmation-details" id="confirmationDetails">
+                        <!-- Dynamic content will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <form id="bookingForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Full Name *" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-input" placeholder="Email Address *" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="tel" class="form-input" placeholder="Phone Number *" required>
+                    </div>
+
+                    <textarea class="form-textarea" placeholder="Tell us about your concerns (Optional)"></textarea>
+
+                    <div class="terms-group">
+                        <input type="checkbox" id="terms" class="terms-checkbox" required>
+                        <label for="terms" class="terms-text">
+                            I agree to MindSpace's <a href="#" class="terms-link">Terms of Service</a> and 
+                            <a href="#" class="terms-link">Privacy Policy</a>. I understand this is a confidential medical consultation.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <span id="submitText">
+                            <i class="fas fa-credit-card"></i>
+                            Confirm & Pay ₹1,500
+                        </span>
+                        <span id="loadingSpinner" class="loading" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Confirmation Modal -->
+    <div class="success-modal-overlay" id="successModal">
+        <div class="success-modal-content">
+            <div class="success-modal-header">
+                <div class="success-checkmark">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2 class="success-title">Session Confirmed!</h2>
+                <p class="success-subtitle">Your appointment has been successfully booked with our specialist.</p>
+            </div>
+
+            <div class="appointment-details-grid" id="successAppointmentDetails">
+                <!-- Dynamic content will be populated by JavaScript -->
+            </div>
+
+            <div class="meeting-info" id="successMeetingInfo" style="display: none;">
+                <!-- Dynamic meeting info will be populated by JavaScript -->
+            </div>
+
+            <div class="success-actions">
+                <button class="btn-success-primary" onclick="closeSuccessModal()">
+                    <i class="fas fa-calendar-check"></i>
+                    View My Appointments
+                </button>
+                <button class="btn-success-secondary" onclick="closeSuccessModal()">
+                    <i class="fas fa-times"></i>
+                    Close
+                </button>
+            </div>
+
+            <div class="success-footer">
+                <p>📧 A confirmation email with session details and preparation guide has been sent to your email address.</p>
+                <p class="success-footer-highlight">Please save your meeting details and join 5 minutes before the scheduled time.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Appointments Section -->
+    <section class="view-appointments-section">
+        <div class="appointments-container">
+            <div class="appointments-header">
+                <h2 class="appointments-title">My Appointments</h2>
+                <p class="appointments-subtitle">View and manage your scheduled mental health sessions</p>
+            </div>
+
+            <div class="appointments-filters">
+                <button class="appointments-filter-btn active" data-filter="all">
+                    <i class="fas fa-th"></i> All Appointments
+                </button>
+                <button class="appointments-filter-btn" data-filter="pending">
+                    <i class="fas fa-clock"></i> Pending
+                </button>
+                <button class="appointments-filter-btn" data-filter="confirmed">
+                    <i class="fas fa-check-circle"></i> Confirmed
+                </button>
+                <button class="appointments-filter-btn" data-filter="completed">
+                    <i class="fas fa-check-double"></i> Completed
+                </button>
+                <button class="appointments-filter-btn" data-filter="cancelled">
+                    <i class="fas fa-times-circle"></i> Cancelled
+                </button>
+            </div>
+
+            <div class="appointments-grid" id="appointmentsGrid">
+                <!-- Dynamic content will be inserted here -->
+                <div class="loading-appointments">
+                    <div class="loading-spinner"></div>
+                    <h3>Loading Appointments...</h3>
+                    <p>Please wait while we fetch your appointments</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer Section -->
     <footer id="contact">
         <div class="container">
@@ -149,404 +439,92 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/config.js"></script>
+    <!-- Scripts -->
     <script src="js/script.js"></script>
-    <script src="js/mood.js"></script>
+    <script src="js/appointment.js"></script>
+    <script>
+        // Initialize authentication and user interface
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                // Redirect to login page if not logged in
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Get user data from localStorage
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            // Update user information in the UI
+            if (userData) {
+                const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+                const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
+                
+                // Update header profile dropdown
+                const headerUsername = document.getElementById('header-username');
+                const headerAvatar = document.getElementById('header-avatar');
+                
+                if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
+                if (headerAvatar) headerAvatar.textContent = initials || 'U';
+            }
+            
+            // Toggle profile dropdown
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            if (profileTrigger && profileDropdown) {
+                profileTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Handle logout
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Clear authentication data
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userData');
+                    
+                    // Show success notification
+                    if (typeof showSuccess === 'function') {
+                        showSuccess('Logged out successfully!');
+                    }
+                    
+                    // Redirect to home page after short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                });
+            }
+            
+            // Handle mood tracker button click
+            const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
+            if (moodTrackerBtn) {
+                moodTrackerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Redirect to mood tracking page
+                    window.location.href = 'mood.html';
+                });
+            }
+            
+            // Check and update mood button if function exists
+            if (typeof checkAndUpdateMoodButton === 'function') {
+                checkAndUpdateMoodButton();
+            }
+        });
+    </script>
 </body>
-</html>
 
-<!-- from the hear this code is written by Aditya Raj  -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MindSpace Appointment</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-
-<style>
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:#f5f7fb;
-    margin:0;
-}
-
-/* HERO */
-.hero{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:40px;
-}
-
-.hero h1{
-    font-size:40px;
-    color:#2f5d56;
-}
-
-.hero img{
-    width:300px;
-    border-radius:20px;
-}
-
-/* LAYOUT */
-.layout{
-    display:flex;
-    gap:20px;
-    padding:20px;
-}
-
-/* FILTER */
-.filter{
-    width:250px;
-    background:#fff;
-    padding:20px;
-    border-radius:15px;
-}
-
-/* THERAPIST */
-.therapist{
-    display:flex;
-    gap:20px;
-    padding:20px;
-    background:#fff;
-    margin-bottom:20px;
-    border-radius:15px;
-}
-
-.therapist img{
-    width:120px;
-    border-radius:15px;
-}
-
-/* BIG INPUTS */
-input, select, textarea{
-    width:100%;
-    padding:15px;
-    margin-top:15px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    font-size:16px;
-}
-
-/* GRID */
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:30px;
-    padding:20px;
-}
-
-/* BUTTON */
-.btn{
-    background:#2f5d56;
-    color:#fff;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-/* CARD */
-.card{
-    background:#fff;
-    padding:25px;
-    border-radius:20px;
-}
-
-/* PAYMENT */
-.payment-box{
-    background:#eaf6f5;
-    padding:30px;
-    border-radius:20px;
-    margin:20px;
-}
-
-/* FAQ */
-.faq{
-    background:#fff;
-    padding:30px;
-    margin:20px;
-    border-radius:20px;
-}
-
-@media(max-width:768px){
-    .layout{
-        flex-direction:column;
-    }
-    .grid{
-        grid-template-columns:1fr;
-    }
-}
-
-/* POPUP */
-.popup{
-    position:fixed;
-    top:20px;
-    right:20px;
-    background:#2f5d56;
-    color:#fff;
-    padding:15px 20px;
-    border-radius:10px;
-    display:none;
-    z-index:999;
-}
-
-/* MODAL */
-.modal{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.6);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
-}
-
-.modal-content{
-    background:#fff;
-    padding:30px;
-    border-radius:15px;
-    text-align:center;
-    width:350px;
-}
-
-</style>
-</head>
-
-<body>
-
-<!-- HERO -->
-<div class="hero">
-    <div>
-        <h1>Book Your Session</h1>
-        <p>Choose best therapist for you</p>
-    </div>
-    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb">
-</div>
-
-<!-- FILTER + THERAPIST -->
-<div class="layout">
-
-<div class="filter">
-    <h3>Filters</h3>
-
-    <label>Specialty</label>
-    <select id="specialty">
-        <option>All</option>
-        <option>Anxiety & Stress</option>
-        <option>Relationship</option>
-    </select>
-
-    <label>Experience</label>
-    <input type="number" id="exp">
-
-    <label>Budget (₹)</label>
-    <input type="number" id="budget">
-
-    <button class="btn" onclick="applyFilter()">Apply</button>
-</div>
-
-<div style="flex:1" id="list">
-
-<div class="therapist" data-specialty="Anxiety & Stress" data-exp="8" data-price="1200">
-<img src="https://randomuser.me/api/portraits/women/44.jpg">
-<div>
-<h3>Dr. Sarah Jenkins</h3>
-<p>8+ yrs | Anxiety Expert</p>
-<p>🏆 Best Therapist 2022</p>
-<p>₹1200/hour</p>
-<button class="btn" onclick="selectTherapist('Dr. Sarah Jenkins')">Select</button>
-</div>
-</div>
-
-<div class="therapist" data-specialty="Relationship" data-exp="6" data-price="1000">
-<img src="https://randomuser.me/api/portraits/men/32.jpg">
-<div>
-<h3>Marcus Thorne</h3>
-<p>6+ yrs | Relationship Coach</p>
-<p>🏆 Certified Coach</p>
-<p>₹1000/hour</p>
-<button class="btn" onclick="selectTherapist('Marcus Thorne')">Select</button>
-</div>
-</div>
-
-<div class="therapist" data-specialty="Anxiety & Stress" data-exp="10" data-price="1500">
-<img src="https://randomuser.me/api/portraits/women/65.jpg">
-<div>
-<h3>Dr. Emily Watson</h3>
-<p>10+ yrs | Trauma Specialist</p>
-<p>🏆 Global Award</p>
-<p>₹1500/hour</p>
-<button class="btn" onclick="selectTherapist('Dr. Emily Watson')">Select</button>
-</div>
-</div>
-
-<div class="therapist" data-specialty="Relationship" data-exp="5" data-price="800">
-<img src="https://randomuser.me/api/portraits/men/55.jpg">
-<div>
-<h3>David Miller</h3>
-<p>5+ yrs | Counselor</p>
-<p>🏆 Certified Therapist</p>
-<p>₹800/hour</p>
-<button class="btn" onclick="selectTherapist('David Miller')">Select</button>
-</div>
-</div>
-
-</div>
-</div>
-
-<!-- DATE + DETAILS -->
-<div class="grid">
-
-<div class="card">
-<h2>Select Date & Time</h2>
-<input type="date" id="date">
-<select id="time">
-<option>09:00 AM</option>
-<option>10:30 AM</option>
-<option>02:30 PM</option>
-<option>05:00 PM</option>
-</select>
-</div>
-
-<div class="card">
-<h2>Your Details</h2>
-<input type="text" id="name" placeholder="Name">
-<input type="email" placeholder="Email">
-<input type="number" placeholder="Age">
-<input type="number" placeholder="Phone Number">
-<input type="text" placeholder="What do you do">
-</div>
-
-</div>
-
-<!-- PAYMENT -->
-<div class="payment-box">
-
-<h2>Booking Summary</h2>
-
-<p><b>Therapist</b><br><span id="therapistName">Not selected</span></p>
-
-<p><b>Date & Time</b><br><span id="summaryDT">Not selected</span></p>
-
-<p><b>Session Type</b><br>Video Consultation</p>
-
-<p><b>Total Amount</b><br>₹1200</p>
-
-<hr>
-
-<h3>Payment Secure</h3>
-
-<p>💳 Credit / Debit Card</p>
-<p>📱 Digital Wallet</p>
-
-<button class="btn" onclick="confirmBooking()">Confirm and Book</button>
-
-<p>🔒 SSL Encrypted Secure Payment</p>
-
-</div>
-
-<!-- FAQ -->
-<div class="faq">
-
-<h2>Frequently Asked</h2>
-
-<h4>Do you accept insurance?</h4>
-<p>We provide super-bills for reimbursement.</p>
-
-<h4>What is your cancellation policy?</h4>
-<p>Cancel before 24 hours free.</p>
-
-<h4>Is my data private?</h4>
-<p>Data is fully secure and encrypted.</p>
-
-<h4>Can I change my therapist?</h4>
-<p>You can switch anytime.</p>
-
-</div>
-
-
-<!-- POPUP -->
-<div id="popup" class="popup"></div>
-
-<!-- CONFIRMATION MODAL -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content">
-        <h2>✅ Appointment Confirmed</h2>
-        <p id="confirmText"></p>
-        <button class="btn" onclick="closeModal()">OK</button>
-    </div>
-</div>
-
-
-<script>
-
-let selectedTherapist="";
-
-function selectTherapist(name){
-    selectedTherapist=name;
-    document.getElementById("therapistName").innerText=name;
-
-    showPopup(name + " selected ✅");
-}
-
-
-function applyFilter(){
-    let sp=document.getElementById("specialty").value;
-    let exp=document.getElementById("exp").value;
-    let bud=document.getElementById("budget").value;
-
-    document.querySelectorAll(".therapist").forEach(t=>{
-        let show=true;
-
-        if(sp!="All" && t.dataset.specialty!=sp) show=false;
-        if(exp && t.dataset.exp<exp) show=false;
-        if(bud && t.dataset.price>bud) show=false;
-
-        t.style.display=show?"flex":"none";
-    });
-}
-
-function confirmBooking(){
-
-    let date=document.getElementById("date").value;
-    let time=document.getElementById("time").value;
-    let name=document.getElementById("name").value;
-
-    if(!name || !date || !selectedTherapist){
-        alert("Please fill all details");
-        return;
-    }
-
-    document.getElementById("summaryDT").innerText=date+" · "+time;
-
-    document.getElementById("confirmModal").style.display="flex";
-
-document.getElementById("confirmText").innerText =
-"Hello " + name + ", your session with " + selectedTherapist +
-" is booked on " + date + " at " + time;
-}
-
-function showPopup(msg){
-    let p=document.getElementById("popup");
-    p.innerText=msg;
-    p.style.display="block";
-    setTimeout(()=>p.style.display="none",2000);
-}
-
-function closeModal(){
-    document.getElementById("confirmModal").style.display="none";
-}
-
-</script>
-
-</body>
 </html>
