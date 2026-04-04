@@ -283,6 +283,41 @@ input, select, textarea{
     }
 }
 
+/* POPUP */
+.popup{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#2f5d56;
+    color:#fff;
+    padding:15px 20px;
+    border-radius:10px;
+    display:none;
+    z-index:999;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+.modal-content{
+    background:#fff;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:350px;
+}
+
 </style>
 </head>
 
@@ -438,6 +473,20 @@ input, select, textarea{
 
 </div>
 
+
+<!-- POPUP -->
+<div id="popup" class="popup"></div>
+
+<!-- CONFIRMATION MODAL -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h2>✅ Appointment Confirmed</h2>
+        <p id="confirmText"></p>
+        <button class="btn" onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+
 <script>
 
 let selectedTherapist="";
@@ -445,7 +494,10 @@ let selectedTherapist="";
 function selectTherapist(name){
     selectedTherapist=name;
     document.getElementById("therapistName").innerText=name;
+
+    showPopup(name + " selected ✅");
 }
+
 
 function applyFilter(){
     let sp=document.getElementById("specialty").value;
@@ -476,7 +528,22 @@ function confirmBooking(){
 
     document.getElementById("summaryDT").innerText=date+" · "+time;
 
-    alert("Booking Confirmed ✅");
+    document.getElementById("confirmModal").style.display="flex";
+
+document.getElementById("confirmText").innerText =
+"Hello " + name + ", your session with " + selectedTherapist +
+" is booked on " + date + " at " + time;
+}
+
+function showPopup(msg){
+    let p=document.getElementById("popup");
+    p.innerText=msg;
+    p.style.display="block";
+    setTimeout(()=>p.style.display="none",2000);
+}
+
+function closeModal(){
+    document.getElementById("confirmModal").style.display="none";
 }
 
 </script>
