@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard.html
+Disallow: /profile.html
+Disallow: /settings.html
+Disallow: /mental-health.html
+Disallow: /mental-report.html
+
+Sitemap: https://mindspace.gu-saurabh.site/sitemap.xml

@@ -1,0 +1,23 @@
+# MindSpace
+
+> Public machine-readable guide for AI assistants and crawlers.
+
+Site: https://mindspace.gu-saurabh.site/
+Sitemap: https://mindspace.gu-saurabh.site/sitemap.xml
+Robots: https://mindspace.gu-saurabh.site/robots.txt
+
+## Public Pages
+- Home: https://mindspace.gu-saurabh.site/
+- About: https://mindspace.gu-saurabh.site/about.html
+- Resources: https://mindspace.gu-saurabh.site/resources.html
+- Appointment: https://mindspace.gu-saurabh.site/appointment.html
+- Team: https://mindspace.gu-saurabh.site/team.html
+- Mood Tracker: https://mindspace.gu-saurabh.site/mood.html
+- AI Support: https://mindspace.gu-saurabh.site/AI-support.html
+
+## Notes
+- Some application pages require login and should not be indexed.
+- Canonical URLs should use the https://mindspace.gu-saurabh.site domain.
+
+## Contact
+- support@mindspace.edu
