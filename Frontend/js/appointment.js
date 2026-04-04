@@ -114,7 +114,8 @@ async function loadSpecialists() {
     }
 
     try {
-        const response = await fetch('http://localhost:5001/api/appointments/specialists', {
+        const apiUrl = window.ENV_API_URL || 'http://localhost:5001';
+        const response = await fetch(`${apiUrl}/api/appointments/specialists`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
             }
@@ -167,7 +168,8 @@ async function selectSpecialist(id) {
 
     // In a real app, find specialist from cached list
     try {
-        const response = await fetch('http://localhost:5001/api/appointments/specialists', {
+        const apiUrl = window.ENV_API_URL || 'http://localhost:5001';
+        const response = await fetch(`${apiUrl}/api/appointments/specialists`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
             }
@@ -258,7 +260,8 @@ async function handleBookingSubmit(e) {
     };
 
     try {
-        const response = await fetch('http://localhost:5001/api/appointments/book', {
+        const apiUrl = window.ENV_API_URL || 'http://localhost:5001';
+        const response = await fetch(`${apiUrl}/api/appointments/book`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
