@@ -13,377 +13,206 @@
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <h1>MindSpace</h1>
+    <script src="js/header-component.js"></script>
+    <!-- Hero Section / Appointment Flow -->
+    <main class="appointment-container">
+        <!-- Hero Section -->
+        <section class="appointment-hero">
+            <div class="hero-text header-section">
+                <h2>Book Your Serenity</h2>
+                <p>Find the right therapist for your journey. A safe space for your mind to bloom, curated with empathy and professional expertise.</p>
             </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="AI-support.html">AI-Support</a></li>
-                    <li><a href="mental-home.html">Mental Health</a></li>
-                    <li><a href="appointment.html">Appointment</a></li>
-                </ul>
-            </nav>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <button class="mood-tracker-btn">
-                    <i class="fas fa-chart-line"></i> Track Your Mood
-                </button>
-                <!-- Replace logout button with user profile dropdown -->
-                <div class="user-profile-dropdown">
-                    <div class="profile-trigger" id="profile-trigger">
-                        <div class="avatar-circle" id="header-avatar">U</div>
-                        <span id="header-username">User</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu" id="profile-dropdown">
-                        <a href="profile.html" class="dropdown-item">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a href="settings.html" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logout-btn" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </div>
+            <div class="hero-banner">
+                <!-- Fallback to a gradient if image not found -->
+                <div style="background: linear-gradient(120deg, #1b3b3a 0%, #366764 100%); height: 250px; width: 100%; border-radius: 30px;"></div>
+                <div class="online-badge">
+                    <span class="online-dot"></span> 12 Specialists Online Now
                 </div>
             </div>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </header>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1>Expert Mental Health Care When You Need It Most</h1>
-                <p class="subtitle">Connect with certified therapists and counselors through our secure platform. Get professional mental health support with easy online booking and personalized care plans.</p>
+        </section>
 
-                <div class="hero-features">
-                    <div class="feature-item">
-                        <i class="fas fa-user-md"></i>
-                        <span>Licensed Professionals</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>100% Confidential</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-video"></i>
-                        <span>Online & In-Person</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-clock"></i>
-                        <span>24/7 Support Available</span>
-                    </div>
+        <div id="booking-flow">
+            <!-- Steps indicator -->
+            <div class="steps-indicator">
+                <div class="step active" id="step-1-indicator">
+                    <div class="step-circle">1</div>
+                    <span>Select Therapist</span>
                 </div>
-
-                <button class="hero-cta" onclick="document.querySelector('.booking-section').scrollIntoView({behavior: 'smooth'})">
-                    <i class="fas fa-calendar-plus"></i>
-                    Book Appointment Now
-                </button>
-            </div>
-
-            <div class="hero-image">
-                <div class="hero-card">
-                    <i class="fas fa-heart"></i>
-                    <h3>Your Mental Wellness Matters</h3>
-                    <p>Professional care tailored to your unique needs</p>
+                <div class="step-line"></div>
+                <div class="step" id="step-2-indicator">
+                    <div class="step-circle">2</div>
+                    <span>Schedule</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" id="step-3-indicator">
+                    <div class="step-circle">3</div>
+                    <span>Details</span>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="stats-container">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number">10,000+</div>
-                    <div class="stat-label">Happy Patients</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-user-md"></i>
-                    </div>
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Expert Therapists</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-number">25,000+</div>
-                    <div class="stat-label">Sessions Completed</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat-number">4.9/5</div>
-                    <div class="stat-label">Patient Rating</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Booking Section -->
-    <section class="booking-section">
-        <div class="appointment-container">
-            <div class="section-header">
-                <h2 class="section-title">Book Your Consultation</h2>
-                <p class="section-subtitle">Choose from our team of experienced mental health professionals and schedule your appointment at your convenience</p>
-            </div>
-
-            <div class="booking-flow">
-                <div class="specialist-section">
-                    <div class="filters">
-                        <button class="filter-btn active" data-filter="all">
-                            <i class="fas fa-th"></i> All Specialists
-                        </button>
-                        <button class="filter-btn" data-filter="stress">
-                            <i class="fas fa-brain"></i> Anxiety & Stress
-                        </button>
-                        <button class="filter-btn" data-filter="relationships">
-                            <i class="fas fa-heart"></i> Relationships
-                        </button>
-                        <button class="filter-btn" data-filter="depression">
-                            <i class="fas fa-sun"></i> Depression
-                        </button>
-                        <button class="filter-btn" data-filter="trauma">
-                            <i class="fas fa-hand-holding-heart"></i> Trauma Recovery
-                        </button>
-                    </div>
-
-                    <div class="specialists-grid" id="specialistsGrid">
-                        <!-- Dynamic content will be inserted here -->
-                    </div>
-                </div>
-
-                <div class="booking-sidebar">
-                    <div class="booking-header">
-                        <h3 class="booking-title">Book Your Session</h3>
-                        <p class="booking-subtitle">Select a specialist to continue</p>
-                    </div>
-
-                    <div class="selected-specialist" id="selectedSpecialist">
-                        <div class="selected-header">
-                            <div class="selected-avatar" id="selectedAvatar"></div>
-                            <div class="selected-info">
-                                <h4 id="selectedName"></h4>
-                                <div class="selected-role" id="selectedRole"></div>
+            <!-- Step 1: Specialists -->
+            <section id="step-1" class="step-content active">
+                <div class="step-1-layout">
+                    <aside class="filters-sidebar">
+                        <h3 style="color:#366764; margin-bottom: 15px;">Refine Search</h3>
+                        
+                        <div class="filter-group">
+                            <label style="font-weight: 500; font-size: 0.9em; display:block; margin-bottom:10px;">Specialty</label>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <label><input type="checkbox" checked> Anxiety & Stress</label>
+                                <label><input type="checkbox"> Depression</label>
+                                <label><input type="checkbox"> Relationships</label>
                             </div>
                         </div>
-                        <div id="selectedTimeSlot" style="color: var(--gray-500); font-size: 0.85rem; text-align: center; margin-top: 0.75rem;">
-                            Select your preferred appointment time
+                        
+                        <div class="emergency-notice" style="background:#fdecec; padding:15px; border-radius:10px; margin-top:30px;">
+                            <h4 style="color:#a83836; margin:0 0 10px 0;"><i class="fas fa-exclamation-triangle"></i> Emergency Notice</h4>
+                            <p style="font-size:0.85em; color:#67040d; margin-bottom:10px;">If you are in immediate danger or a crisis, please do not use this booking system.</p>
+                            <a href="#" style="color:#a83836; font-size:0.85em; font-weight:bold;">Find Crisis Helplines</a>
+                        </div>
+                    </aside>
+                    
+                    <div class="specialists-carousel">
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                            <button class="carousel-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="specialists-grid" id="specialists-container">
+                            <!-- Loaded dynamically -->
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-calendar-alt"></i> Select Date
-                        </label>
-                        <select class="form-select" id="datePicker">
-                            <option value="">Choose a date</option>
-                        </select>
+            <!-- Step 2: Schedule -->
+            <section id="step-2" class="step-content">
+                <div class="schedule-container">
+                    <button class="back-btn" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h3>Schedule Your Visit</h3>
+                    <p>Select a time that suits your mental pace.</p>
+                    
+                    <div class="session-types">
+                        <label><input type="radio" name="sessionType" value="Video" checked> Video</label>
+                        <label><input type="radio" name="sessionType" value="Audio"> Audio</label>
+                        <label><input type="radio" name="sessionType" value="Chat"> Chat</label>
                     </div>
 
-                    <!-- Add Counseling Type Selection -->
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-video"></i> Counseling Type
-                        </label>
-                        <select class="form-select" id="counselingType" required>
-                            <option value="">Select counseling type</option>
-                            <option value="video-call">Video Call</option>
-                            <option value="phone-call">Phone Call</option>
-                            <option value="in-office">In-Office Visit</option>
-                        </select>
-                    </div>
-
-                    <div class="time-slots-container">
-                        <div class="time-slots-title">
-                            <i class="fas fa-clock"></i> Available Time Slots
+                    <div class="datetime-picker">
+                        <div class="date-picker">
+                            <label>Select Date</label>
+                            <input type="date" id="appointment-date" min="" required>
                         </div>
-                        <div class="time-slots" id="timeSlots">
-                            <div style="text-align: center; color: var(--gray-400); padding: 2rem; font-style: italic; grid-column: 1 / -1;">
-                                <i class="fas fa-user-clock" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; display: block;"></i>
-                                <div style="font-size: 0.9rem;">Select a specialist to view available times</div>
+                        <div class="time-picker">
+                            <label>Available Slots</label>
+                            <div class="slots-grid" id="time-slots">
+                                <button type="button" class="slot-btn" data-time="09:00 AM">09:00 AM</button>
+                                <button type="button" class="slot-btn" data-time="10:30 AM">10:30 AM</button>
+                                <button type="button" class="slot-btn" data-time="01:00 PM">01:00 PM</button>
+                                <button type="button" class="slot-btn" data-time="02:30 PM">02:30 PM</button>
+                                <button type="button" class="slot-btn" data-time="04:00 PM">04:00 PM</button>
+                                <button type="button" class="slot-btn" data-time="05:30 PM">05:30 PM</button>
                             </div>
                         </div>
                     </div>
-
-                    <div class="booking-summary">
-                        <div class="summary-title">
-                            <i class="fas fa-receipt"></i> Appointment Summary
-                        </div>
-                        <div class="summary-item">
-                            <span>Consultation Fee</span>
-                            <span class="summary-value">₹1,500</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>Platform Fee</span>
-                            <span class="summary-value">₹0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>Total Amount</span>
-                            <span class="summary-value">₹1,500</span>
-                        </div>
-                    </div>
-
-                    <button class="book-btn" id="bookBtn" disabled>
-                        <i class="fas fa-lock"></i>
-                        Complete Booking
-                    </button>
+                    <button class="btn-primary continue-btn" id="btn-to-step-3" disabled>Continue to Details</button>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Confirmation Modal -->
-    <div class="modal-overlay" id="confirmationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">
-                    <i class="fas fa-check-circle" style="color: var(--success-green); margin-right: 0.5rem;"></i> Confirm Appointment
-                </h2>
-                <button class="close-modal" id="closeModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div class="confirmation-card">
-                    <div class="success-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <h3>Appointment Confirmed!</h3>
-                    <p>Your session has been successfully booked with our specialist.</p>
-
-                    <div class="confirmation-details" id="confirmationDetails">
-                        <!-- Dynamic content will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <form id="bookingForm">
-                    <div class="form-row">
+            <!-- Step 3: Details -->
+            <section id="step-3" class="step-content">
+                <div class="details-container">
+                    <button class="back-btn" onclick="goToStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h3>Your Details</h3>
+                    
+                    <form id="booking-form">
                         <div class="form-group">
-                            <input type="text" class="form-input" placeholder="Full Name *" required>
+                            <label>Full Name</label>
+                            <input type="text" id="patient-name" required placeholder="John Doe">
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-input" placeholder="Email Address *" required>
+                            <label>Email Address</label>
+                            <input type="email" id="patient-email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Tell us a bit about your concern (Optional)</label>
+                            <textarea id="patient-concern" rows="4" placeholder="Briefly describe what you'd like to talk about..."></textarea>
+                        </div>
+
+                        <div class="booking-summary-card">
+                            <h4>Booking Summary</h4>
+                            <div class="summary-row">
+                                <span>Therapist</span>
+                                <strong id="summary-therapist">--</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Date & Time</span>
+                                <strong id="summary-datetime">--</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Session Type</span>
+                                <strong id="summary-session">--</strong>
+                            </div>
+                            <div class="summary-total">
+                                <span>Total Amount</span>
+                                <strong id="summary-price">--</strong>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary confirm-booking-btn" id="confirm-booking">Confirm and Book</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Confirmation View -->
+        <div id="confirmation-view" style="display: none;">
+            <div class="confirmation-modal">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Booking Confirmed</h2>
+                <p>Your journey toward inner peace continues. We've sent a confirmation email with all the details.</p>
+                <p><strong>Appointment #:</strong> <span id="conf-apt-number"></span></p>
+
+                <div class="conf-details-card">
+                    <div class="conf-header">
+                        <div>
+                            <span class="label">APPOINTMENT DETAILS</span>
+                            <h3 id="conf-session-type">Video Consultation</h3>
+                        </div>
+                        <div class="conf-therapist-img">
+                            <img id="conf-therapist-img" src="" alt="Therapist">
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <input type="tel" class="form-input" placeholder="Phone Number *" required>
+                    <div class="conf-body">
+                        <div class="conf-item">
+                            <i class="fas fa-user text-primary"></i>
+                            <div>
+                                <span>Therapist</span>
+                                <strong id="conf-therapist">--</strong>
+                            </div>
+                        </div>
+                        <div class="conf-item">
+                            <i class="fas fa-calendar text-primary"></i>
+                            <div>
+                                <span>Date</span>
+                                <strong id="conf-date">--</strong>
+                            </div>
+                        </div>
+                        <div class="conf-item">
+                            <i class="fas fa-clock text-primary"></i>
+                            <div>
+                                <span>Time</span>
+                                <strong id="conf-time">--</strong>
+                            </div>
+                        </div>
                     </div>
-
-                    <textarea class="form-textarea" placeholder="Tell us about your concerns (Optional)"></textarea>
-
-                    <div class="terms-group">
-                        <input type="checkbox" id="terms" class="terms-checkbox" required>
-                        <label for="terms" class="terms-text">
-                            I agree to MindSpace's <a href="#" class="terms-link">Terms of Service</a> and 
-                            <a href="#" class="terms-link">Privacy Policy</a>. I understand this is a confidential medical consultation.
-                        </label>
-                    </div>
-
-                    <button type="submit" class="submit-btn">
-                        <span id="submitText">
-                            <i class="fas fa-credit-card"></i>
-                            Confirm & Pay ₹1,500
-                        </span>
-                        <span id="loadingSpinner" class="loading" style="display: none;"></span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="success-modal-overlay" id="successModal">
-        <div class="success-modal-content">
-            <div class="success-modal-header">
-                <div class="success-checkmark">
-                    <i class="fas fa-check"></i>
                 </div>
-                <h2 class="success-title">Session Confirmed!</h2>
-                <p class="success-subtitle">Your appointment has been successfully booked with our specialist.</p>
-            </div>
 
-            <div class="appointment-details-grid" id="successAppointmentDetails">
-                <!-- Dynamic content will be populated by JavaScript -->
-            </div>
-
-            <div class="meeting-info" id="successMeetingInfo" style="display: none;">
-                <!-- Dynamic meeting info will be populated by JavaScript -->
-            </div>
-
-            <div class="success-actions">
-                <button class="btn-success-primary" onclick="closeSuccessModal()">
-                    <i class="fas fa-calendar-check"></i>
-                    View My Appointments
-                </button>
-                <button class="btn-success-secondary" onclick="closeSuccessModal()">
-                    <i class="fas fa-times"></i>
-                    Close
-                </button>
-            </div>
-
-            <div class="success-footer">
-                <p>📧 A confirmation email with session details and preparation guide has been sent to your email address.</p>
-                <p class="success-footer-highlight">Please save your meeting details and join 5 minutes before the scheduled time.</p>
+                <a href="dashboard.html" class="btn-primary dashboard-link">Go to Dashboard</a>
             </div>
         </div>
-    </div>
-
-    <!-- View Appointments Section -->
-    <section class="view-appointments-section">
-        <div class="appointments-container">
-            <div class="appointments-header">
-                <h2 class="appointments-title">My Appointments</h2>
-                <p class="appointments-subtitle">View and manage your scheduled mental health sessions</p>
-            </div>
-
-            <div class="appointments-filters">
-                <button class="appointments-filter-btn active" data-filter="all">
-                    <i class="fas fa-th"></i> All Appointments
-                </button>
-                <button class="appointments-filter-btn" data-filter="pending">
-                    <i class="fas fa-clock"></i> Pending
-                </button>
-                <button class="appointments-filter-btn" data-filter="confirmed">
-                    <i class="fas fa-check-circle"></i> Confirmed
-                </button>
-                <button class="appointments-filter-btn" data-filter="completed">
-                    <i class="fas fa-check-double"></i> Completed
-                </button>
-                <button class="appointments-filter-btn" data-filter="cancelled">
-                    <i class="fas fa-times-circle"></i> Cancelled
-                </button>
-            </div>
-
-            <div class="appointments-grid" id="appointmentsGrid">
-                <!-- Dynamic content will be inserted here -->
-                <div class="loading-appointments">
-                    <div class="loading-spinner"></div>
-                    <h3>Loading Appointments...</h3>
-                    <p>Please wait while we fetch your appointments</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    </main>
 
     <!-- Footer Section -->
     <footer id="contact">
@@ -439,91 +268,11 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="js/config.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/common-auth.js"></script>
     <script src="js/appointment.js"></script>
-    <script>
-        // Initialize authentication and user interface
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
-            const authToken = localStorage.getItem('authToken');
-            if (!authToken) {
-                // Redirect to login page if not logged in
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            // Get user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            
-            // Update user information in the UI
-            if (userData) {
-                const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-                const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-                
-                // Update header profile dropdown
-                const headerUsername = document.getElementById('header-username');
-                const headerAvatar = document.getElementById('header-avatar');
-                
-                if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
-                if (headerAvatar) headerAvatar.textContent = initials || 'U';
-            }
-            
-            // Toggle profile dropdown
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
-            
-            if (profileTrigger && profileDropdown) {
-                profileTrigger.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    profileDropdown.classList.toggle('active');
-                });
-                
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                        profileDropdown.classList.remove('active');
-                    }
-                });
-            }
-            
-            // Handle logout
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Clear authentication data
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('userData');
-                    
-                    // Show success notification
-                    if (typeof showSuccess === 'function') {
-                        showSuccess('Logged out successfully!');
-                    }
-                    
-                    // Redirect to home page after short delay
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                });
-            }
-            
-            // Handle mood tracker button click
-            const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-            if (moodTrackerBtn) {
-                moodTrackerBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Redirect to mood tracking page
-                    window.location.href = 'mood.html';
-                });
-            }
-            
-            // Check and update mood button if function exists
-            if (typeof checkAndUpdateMoodButton === 'function') {
-                checkAndUpdateMoodButton();
-            }
-        });
-    </script>
-</body>
+    
+   </body>
 
 </html>

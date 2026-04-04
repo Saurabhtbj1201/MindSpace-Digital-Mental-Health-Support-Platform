@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication
     const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'index.html';
-        return;
-    }
+    const isLoggedIn = Boolean(authToken);
 
     // API configuration
     const apiConfig = {
@@ -13,73 +9,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Headers for API requests
     const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
     };
 
     // Initialize page
     initializePage();
 
     async function initializePage() {
-        updateUserProfile();
         setupEventListeners();
+
+        if (!isLoggedIn) {
+            showGuestAssessmentState();
+            return;
+        }
+
         await checkPrerequisites();
         await loadAssessmentHistory();
     }
 
-    function updateUserProfile() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-        }
-        setupProfileDropdown();
-    }
+    function showGuestAssessmentState() {
+        const content = document.getElementById('prerequisites-content');
+        const startContainer = document.getElementById('start-assessment-container');
+        const historyContainer = document.getElementById('assessment-history');
 
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        if (profileTrigger) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
+        if (content) {
+            content.innerHTML = `
+                <div class="prerequisite error">
+                    <i class="fas fa-lock"></i>
+                    <span>Login to view mental health prerequisites and start an assessment.</span>
+                </div>
+            `;
         }
 
-        document.addEventListener('click', (event) => {
-            if (profileTrigger && profileDropdown && !profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
+        if (startContainer) {
+            startContainer.style.display = 'block';
+        }
 
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
+        if (historyContainer) {
+            historyContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-lock"></i>
+                    <h3>Login Required</h3>
+                    <p>Please login to view your assessment history.</p>
+                </div>
+            `;
         }
     }
 
     function setupEventListeners() {
-        // Mood tracker button
-        const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-        if (moodTrackerBtn) {
-            moodTrackerBtn.addEventListener('click', () => {
-                window.location.href = 'mood.html';
-            });
-        }
-
         // Start new assessment button
         const startAssessmentBtn = document.getElementById('start-new-assessment');
         if (startAssessmentBtn) {
             startAssessmentBtn.addEventListener('click', async () => {
+                if (!isLoggedIn) {
+                    if (typeof window.requireAuth === 'function') {
+                        window.requireAuth('Login to view and start mental health assessments.');
+                    }
+                    return;
+                }
+
                 // Clear all previous module progress before starting new assessment
                 try {
                     const response = await fetch(`${apiConfig.backendApiUrl}/api/mental-health/progress/clear`, {
@@ -107,6 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function checkPrerequisites() {
+        if (!isLoggedIn) {
+            return;
+        }
+
         const content = document.getElementById('prerequisites-content');
         content.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Checking requirements...</div>';
 
@@ -225,6 +218,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadAssessmentHistory() {
+        if (!isLoggedIn) {
+            return;
+        }
+
         const historyContainer = document.getElementById('assessment-history');
         
         try {

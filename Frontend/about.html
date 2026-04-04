@@ -22,58 +22,7 @@
     <div class="notifications-container" id="notifications-container"></div>
     
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <h1>MindSpace</h1>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <!-- Navigation links will be updated by updateNavigation() -->
-                </ul>
-            </nav>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <button class="mood-tracker-btn">
-                    <i class="fas fa-chart-line"></i> Track Your Mood
-                </button>
-
-                <!-- Auth buttons container - will be hidden when logged in -->
-                <div class="auth-buttons-container" style="display: none;">
-                    <div class="auth-buttons">
-                        <button class="btn-secondary">Login</button>
-                        <button class="btn-primary">Register</button>
-                    </div>
-                </div>
-
-                <!-- User profile dropdown - initially hidden, shown when logged in -->
-                <div class="user-profile-dropdown" style="display: none;">
-                    <div class="profile-trigger" id="profile-trigger">
-                        <div class="avatar-circle" id="header-avatar">U</div>
-                        <span id="header-username">User</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu" id="profile-dropdown">
-                        <a href="profile.html" class="dropdown-item">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a href="settings.html" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logout-btn" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </header>
+    <script src="js/header-component.js"></script>
 
     <!-- About Hero Section -->
     <section class="hero">
@@ -240,87 +189,6 @@
 
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update navigation based on authentication state
-            updateNavigation();
-            
-            // Authentication check
-            const authToken = localStorage.getItem('authToken');
-            if (authToken) {
-                // User is logged in
-                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-                // Hide auth buttons, show profile dropdown
-                document.querySelector('.auth-buttons-container').style.display = 'none';
-                document.querySelector('.user-profile-dropdown').style.display = 'block';
-
-                // Update user info
-                const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-                document.getElementById('header-username').textContent = userData.firstName || 'User';
-                document.getElementById('header-avatar').textContent = initials || 'U';
-
-                // Set up profile dropdown toggle
-                const profileTrigger = document.getElementById('profile-trigger');
-                const profileDropdown = document.getElementById('profile-dropdown');
-
-                profileTrigger.addEventListener('click', function() {
-                    profileDropdown.classList.toggle('active');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                        profileDropdown.classList.remove('active');
-                    }
-                });
-
-                // Handle logout
-                document.getElementById('logout-btn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('userData');
-                    showSuccess('Logged out successfully!');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                });
-            } else {
-                // User is not logged in
-                document.querySelector('.auth-buttons-container').style.display = 'flex';
-                document.querySelector('.user-profile-dropdown').style.display = 'none';
-
-                // Set up login/register button clicks
-                const loginBtn = document.querySelector('.auth-buttons .btn-secondary');
-                const registerBtn = document.querySelector('.auth-buttons .btn-primary');
-
-                if (loginBtn) {
-                    loginBtn.addEventListener('click', () => {
-                        window.location.href = 'index.html#login';
-                    });
-                }
-
-                if (registerBtn) {
-                    registerBtn.addEventListener('click', () => {
-                        window.location.href = 'index.html#register';
-                    });
-                }
-            }
-
-            // Mood tracker button functionality
-            const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-            if (moodTrackerBtn) {
-                moodTrackerBtn.addEventListener('click', function() {
-                    const authToken = localStorage.getItem('authToken');
-                    if (authToken) {
-                        window.location.href = 'mood.html';
-                    } else {
-                        showInfo('Please sign up or log in to track your mood');
-                        window.location.href = 'index.html#login';
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="js/common-auth.js"></script>
 </body>
 </html>

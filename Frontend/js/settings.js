@@ -10,9 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get user data from localStorage
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     
-    // Update profile information in header
-    updateProfileInfo(userData);
-    
     // Set up authentication header for API requests
     const headers = {
         'Authorization': `Bearer ${authToken}`,
@@ -33,37 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         await loadAccountInfo();
         setupFormHandlers();
         setupModalHandlers();
-    }
-    
-    // Function to update profile information in header
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
     }
     
     // Function to load account information
@@ -561,25 +527,6 @@ document.addEventListener('DOMContentLoaded', function() {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-        });
-    }
-    
-    // Setup profile dropdown
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        if (!profileTrigger || !profileDropdown) return;
-        
-        profileTrigger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
         });
     }
     

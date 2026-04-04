@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Resource data structure
     let allResources = [];
     let filteredResources = [];
+    const isLoggedIn = Boolean(localStorage.getItem('authToken'));
+
+    const promptResourceLogin = () => {
+        if (typeof window.requireAuth === 'function') {
+            window.requireAuth('Login to access resource content.');
+        }
+    };
     
     // Load resources from JSON file
     const loadResources = async () => {
@@ -120,11 +127,11 @@ document.addEventListener('DOMContentLoaded', function() {
         switch(resource.type) {
             case 'videos':
                 card.innerHTML = createVideoCard(resource, typeIcon, tags);
-                setupVideoEvents(card, resource);
+                if (isLoggedIn) setupVideoEvents(card, resource);
                 break;
             case 'audio':
                 card.innerHTML = createAudioCard(resource, typeIcon, tags);
-                setupAudioEvents(card, resource);
+                if (isLoggedIn) setupAudioEvents(card, resource);
                 break;
             case 'posters':
                 card.innerHTML = createPosterCard(resource, typeIcon, tags);
@@ -132,12 +139,20 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'guides':
             case 'books':
                 card.innerHTML = createPDFCard(resource, typeIcon, tags);
-                setupPDFEvents(card, resource);
+                if (isLoggedIn) setupPDFEvents(card, resource);
                 break;
             case 'quotes':
                 card.innerHTML = createQuotesCard(resource, typeIcon, tags);
-                setupQuotesEvents(card, resource);
+                if (isLoggedIn) setupQuotesEvents(card, resource);
                 break;
+        }
+
+        if (!isLoggedIn) {
+            card.classList.add('requires-login');
+            card.addEventListener('click', (event) => {
+                event.preventDefault();
+                promptResourceLogin();
+            });
         }
 
         return card;
@@ -190,26 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial setup
     const initializePage = () => {
-        updateUserProfile();
         setupEventListeners();
-        setupMoodTrackerButton();
-    };
-    
-    // Update user profile information
-    const updateUserProfile = () => {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const headerUsername = document.getElementById('header-username');
-        const headerAvatar = document.getElementById('header-avatar');
-        
-        if (userData && headerUsername && headerAvatar) {
-            const firstName = userData.firstName || '';
-            const lastName = userData.lastName || '';
-            const fullName = `${firstName} ${lastName}`.trim();
-            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
-            
-            headerUsername.textContent = firstName || 'User';
-            headerAvatar.textContent = initials || 'U';
-        }
     };
     
     const setupEventListeners = () => {
@@ -217,47 +213,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (moodFilter) moodFilter.addEventListener('change', applyFilters);
         if (searchFilter) searchFilter.addEventListener('input', debounce(applyFilters, 300));
         if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearFilters);
-        
-        setupProfileDropdown();
-    };
-
-    const setupProfileDropdown = () => {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-        
-        if (profileTrigger) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-        }
-        
-        document.addEventListener('click', (event) => {
-            if (profileTrigger && profileDropdown && !profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-        
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                console.log('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    };
-    
-    const setupMoodTrackerButton = () => {
-        const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-        if (moodTrackerBtn) {
-            moodTrackerBtn.addEventListener('click', () => {
-                window.location.href = 'mood.html';
-            });
-        }
     };
     
     // Public function for recommendations

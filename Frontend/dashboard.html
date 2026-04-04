@@ -43,53 +43,7 @@
     <div class="notifications-container" id="notifications-container"></div>
     
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <h1>MindSpace</h1>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="AI-support.html">AI-Support</a></li>
-                    <li><a href="mental-home.html">Mental Health</a></li>
-                    <li><a href="appointment.html">Appointment</a></li>
-                </ul>
-            </nav>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <button class="mood-tracker-btn">
-                    <i class="fas fa-chart-line"></i> Track Your Mood
-                </button>
-                <!-- Replace logout button with user profile dropdown -->
-                <div class="user-profile-dropdown">
-                    <div class="profile-trigger" id="profile-trigger">
-                        <div class="avatar-circle" id="header-avatar">U</div>
-                        <span id="header-username">User</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu" id="profile-dropdown">
-                        <a href="profile.html" class="dropdown-item">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a href="settings.html" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logout-btn" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </header>
+    <script src="js/header-component.js"></script>
 
     <!-- Dashboard Section -->
     <section id="dashboard" class="dashboard-container">
@@ -204,98 +158,37 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/common-auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
             const authToken = localStorage.getItem('authToken');
             if (!authToken) {
-                // Redirect to login page if not logged in
                 window.location.href = 'index.html';
                 return;
             }
             
-            // Get user data from localStorage
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             
-            // Update user information in the UI
             if (userData) {
                 const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
                 const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
                 
-                // Update welcome message
                 document.getElementById('user-name').textContent = userData.firstName || 'User';
                 
-                // Update profile section
                 document.getElementById('profile-name').textContent = fullName || 'User Name';
                 document.getElementById('profile-email').textContent = userData.email || 'user@example.com';
                 document.getElementById('profile-avatar').textContent = initials || 'U';
-                
-                // Update header profile dropdown
-                document.getElementById('header-username').textContent = userData.firstName || 'User';
-                document.getElementById('header-avatar').textContent = initials || 'U';
             }
-            
-            // Toggle profile dropdown
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
-            
-            profileTrigger.addEventListener('click', function() {
-                profileDropdown.classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-            });
-            
-            // Check if user just logged in and show welcome notification only once
+
             const justLoggedIn = localStorage.getItem('justLoggedIn');
             if (justLoggedIn === 'true') {
-                // Show welcome notification
                 showSuccess(`Welcome back, ${userData.firstName || 'User'}!`);
-                
-                // Remove the flag so notification won't show on refresh
                 localStorage.removeItem('justLoggedIn');
             }
-            
-            // Handle mood tracker button click
-            const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-            if (moodTrackerBtn) {
-                moodTrackerBtn.addEventListener('click', function() {
-                    // Redirect to mood tracking page
-                    window.location.href = 'mood.html';
-                });
+
+            if (typeof checkAndUpdateMoodButton === 'function') {
+                checkAndUpdateMoodButton();
             }
-            
-            // Handle Daily Check-in button click (redirect to mood page)
-            const dailyCheckinBtn = document.querySelector('.dashboard-card .btn-primary');
-            if (dailyCheckinBtn && dailyCheckinBtn.textContent === 'Start Check-in') {
-                dailyCheckinBtn.addEventListener('click', function() {
-                    window.location.href = 'mood.html';
-                });
-            }
-            
-            // Check and update mood button
-            checkAndUpdateMoodButton();
         });
     </script>
 

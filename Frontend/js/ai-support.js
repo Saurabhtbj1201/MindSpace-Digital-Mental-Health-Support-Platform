@@ -1,21 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
+    // Allow page access for guests; protect chat operations.
     const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
-    // Update profile information
-    updateProfileInfo(userData);
+    const isLoggedIn = Boolean(authToken);
     
     // Set up authentication header for API requests
     const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
     };
     
     // API Configuration
@@ -59,14 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to initialize the page
     async function initializePage() {
-        // Check and update mood status
-        await checkMoodStatus();
+        // Check and update mood status only for logged-in users
+        if (isLoggedIn) {
+            await checkMoodStatus();
+            loadConversationHistory();
+        } else {
+            enableGuestMode();
+        }
         
         // Set up event listeners
         setupEventListeners();
-        
-        // Load conversation history from localStorage
-        loadConversationHistory();
         
         // Auto-resize textarea
         autoResizeTextarea();
@@ -80,31 +73,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Setup speech features
         setupSpeechFeatures();
     }
-    
-    // Function to update profile information
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                localStorage.removeItem('ai_conversation_history');
-                showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
+
+    function enableGuestMode() {
+        if (aiStatus) {
+            aiStatus.textContent = 'Login to start chat support';
+        }
+
+        if (moodStatusMessage) {
+            moodStatusMessage.textContent = 'Login required for personalized AI responses.';
+        }
+
+        if (chatInput) {
+            chatInput.placeholder = 'Login to start a conversation with MindSpace AI...';
         }
     }
     
@@ -180,6 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to set up event listeners
     function setupEventListeners() {
+        if (!chatInput || !sendBtn) {
+            return;
+        }
+
         // Chat input events
         chatInput.addEventListener('input', function() {
             updateCharCount();
@@ -200,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Quick action buttons
         quickActionButtons.forEach(button => {
             button.addEventListener('click', function() {
+                if (!isLoggedIn) {
+                    if (typeof window.requireAuth === 'function') {
+                        window.requireAuth('Login to start AI chat support.');
+                    }
+                    return;
+                }
+
                 const message = this.getAttribute('data-message');
                 chatInput.value = message;
                 updateCharCount();
@@ -530,6 +521,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to send message
     async function sendMessage() {
+        if (!isLoggedIn) {
+            if (typeof window.requireAuth === 'function') {
+                window.requireAuth('Login to start AI chat support.');
+            }
+            return;
+        }
+
         const message = chatInput.value.trim();
         if (!message || isTyping) return;
         
@@ -1663,66 +1661,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Setup profile dropdown
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        if (!profileTrigger || !profileDropdown) return;
-        
-        profileTrigger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-    }
-    
-    // Check recent mood and update mood tracker button
-    async function checkAndUpdateMoodButton() {
-        if (!authToken) return;
-        
-        try {
-            const apiUrl = `${apiConfig.backendApiUrl}/api/mood/recent`;
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers
-            });
-            
-            const data = await response.json();
-            
-            if (data.success && data.isRecent) {
-                const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-                if (moodTrackerBtn) {
-                    const moodData = data.data;
-                    const moodEmojis = {
-                        'Angry': '😠',
-                        'Disgust': '🤢',
-                        'Fear': '😨',
-                        'Happy': '😄',
-                        'Neutral': '😐',
-                        'Sad': '😢',
-                        'Surprise': '😲'
-                    };
-                    
-                    const emoji = moodEmojis[moodData.label] || '📊';
-                    moodTrackerBtn.innerHTML = `
-                        <span style="font-size: 16px;">${emoji}</span> ${moodData.label}
-                    `;
-                    moodTrackerBtn.classList.add('current-mood');
-                }
-            }
-        } catch (error) {
-            console.error('Error checking recent mood:', error);
-        }
-    }
-    
-    // Check and update mood button
-    checkAndUpdateMoodButton();
 });
 
 // Global functions for in-panel media playback

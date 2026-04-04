@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializePage();
 
     async function initializePage() {
-        updateUserProfile();
         setupEventListeners();
         
         // Check if we should generate a new report
@@ -35,58 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function updateUserProfile() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            const headerUsername = document.getElementById('header-username');
-            const headerAvatar = document.getElementById('header-avatar');
-            
-            if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
-            if (headerAvatar) headerAvatar.textContent = initials || 'U';
-        }
-        setupProfileDropdown();
-    }
-
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        if (profileTrigger && profileDropdown) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-        }
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    }
-
     function setupEventListeners() {
-        // Mood tracker button
-        const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-        if (moodTrackerBtn) {
-            moodTrackerBtn.addEventListener('click', () => {
-                window.location.href = 'mood.html';
-            });
-        }
-
         // New assessment button
         const newAssessmentBtn = document.getElementById('new-assessment-btn');
         if (newAssessmentBtn) {

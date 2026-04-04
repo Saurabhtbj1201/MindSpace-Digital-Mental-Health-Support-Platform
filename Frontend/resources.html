@@ -23,53 +23,7 @@
     <div class="notifications-container" id="notifications-container"></div>
     
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-brain"></i>
-                <h1>MindSpace</h1>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="AI-support.html">AI-Support</a></li>
-                    <li><a href="mental-home.html">Mental Health</a></li>
-                    <li><a href="appointment.html">Appointment</a></li>
-                    <li><a href="#resources" class="active">Resources</a></li>
-                </ul>
-            </nav>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <button class="mood-tracker-btn">
-                    <i class="fas fa-chart-line"></i> Track Your Mood
-                </button>
-                <div class="user-profile-dropdown">
-                    <div class="profile-trigger" id="profile-trigger">
-                        <div class="avatar-circle" id="header-avatar">U</div>
-                        <span id="header-username">User</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu" id="profile-dropdown">
-                        <a href="profile.html" class="dropdown-item">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                        <a href="#settings" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logout-btn" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </header>
+    <script src="js/header-component.js"></script>
 
     <!-- Resources Container -->
     <div class="resources-container">
@@ -207,6 +161,7 @@
     <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/common-auth.js"></script>
     <script src="js/resources.js"></script>
 </body>
 </html>

@@ -1,22 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
     const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        // Redirect to login page if not logged in
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
-    // Update profile information
-    updateProfileInfo(userData);
+    const isLoggedIn = Boolean(authToken);
     
     // Set up authentication header for API requests
     const headers = {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...(isLoggedIn ? { 'Authorization': `Bearer ${authToken}` } : {})
     };
     
     // Elements for AI mood detection
@@ -84,6 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Save manual mood button click handler
     saveManualMoodBtn.addEventListener('click', function() {
+        if (!isLoggedIn) {
+            if (typeof window.requireAuth === 'function') {
+                window.requireAuth('Login to save your mood.');
+            }
+            return;
+        }
+
         if (!selectedMood) {
             showWarning('Please select a mood before saving.');
             return;
@@ -97,6 +93,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Capture mood with AI button click handler
     captureBtn.addEventListener('click', function() {
+        if (!isLoggedIn) {
+            if (typeof window.requireAuth === 'function') {
+                window.requireAuth('Login to use AI mood detection.');
+            }
+            return;
+        }
+
         startMoodCapture();
     });
     
@@ -104,15 +107,36 @@ document.addEventListener('DOMContentLoaded', function() {
     async function initializePage() {
         // Load API configuration from frontend environment config
         loadApiConfig();
+
+        // Initialize chart for all users
+        initMoodChart();
+
+        if (!isLoggedIn) {
+            showGuestMoodState();
+            return;
+        }
         
         // Check if user has recently tracked their mood
         checkRecentMood();
         
         // Load mood history
         loadMoodHistory();
-        
-        // Initialize chart
-        initMoodChart();
+    }
+
+    function showGuestMoodState() {
+        if (result) {
+            result.innerHTML = '<div class="result-content">Login to capture and save your mood entries.</div>';
+        }
+
+        const historyList = document.getElementById('historyList');
+        if (historyList) {
+            historyList.innerHTML = '<p class="empty-history">Login to view your mood history.</p>';
+        }
+
+        const recommendationContent = document.getElementById('recommendation-content');
+        if (recommendationContent) {
+            recommendationContent.innerHTML = '<p style="color:#888;">Login to get personalized recommendations based on your mood.</p>';
+        }
     }
     
     // Function to load API configuration from frontend environment config
@@ -126,52 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Function to update profile information
-    function updateProfileInfo(userData) {
-        if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
-            // Set up dropdown toggle
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
-            
-            profileTrigger.addEventListener('click', function() {
-                profileDropdown.classList.toggle('active');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    }
-    
     // Function to check if user has recently tracked their mood
     async function checkRecentMood() {
+        if (!isLoggedIn) {
+            return;
+        }
+
         try {
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood/recent`;
             const response = await fetch(apiUrl, {
@@ -203,6 +187,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to load mood history from the server
     async function loadMoodHistory() {
+        if (!isLoggedIn) {
+            return;
+        }
+
         try {
             const apiUrl = `${apiConfig.backendApiUrl}/api/mood?limit=30`;
             const response = await fetch(apiUrl, {
@@ -443,6 +431,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to save mood data (common function for both AI and manual)
     async function saveMoodData(value, label, notes, captureMethod) {
+        if (!isLoggedIn) {
+            if (typeof window.requireAuth === 'function') {
+                window.requireAuth('Login to save your mood.');
+            }
+            return false;
+        }
+
         // Always define originalText at the top
         const targetBtn = captureMethod === 'ai' ? captureBtn : saveManualMoodBtn;
         const originalText = targetBtn.textContent;
@@ -517,6 +512,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to start the mood capture process with AI
     async function startMoodCapture() {
+        if (!isLoggedIn) {
+            if (typeof window.requireAuth === 'function') {
+                window.requireAuth('Login to use AI mood detection.');
+            }
+            return;
+        }
+
         try {
             // Disable capture button
             captureBtn.disabled = true;
@@ -781,32 +783,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Fix profile dropdown toggle and outside click
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        if (!profileTrigger || !profileDropdown) return;
-        // Remove any previous event listeners
-        profileTrigger.onclick = null;
-        document.removeEventListener('click', closeDropdownOnClickOutside, true);
-        // Toggle dropdown on trigger click
-        profileTrigger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        // Close dropdown when clicking outside
-        document.addEventListener('click', closeDropdownOnClickOutside, true);
-        function closeDropdownOnClickOutside(event) {
-            if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        }
-    }
-    // Call setupProfileDropdown after DOM ready
-    setupProfileDropdown();
-    
     // Function to load and display recommendations based on mood
     async function loadRecommendations(moodLabel) {
+        if (!isLoggedIn) {
+            return;
+        }
+
         try {
             // Load resources from resources.json
             const response = await fetch('resource/resources.json');

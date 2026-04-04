@@ -856,6 +856,10 @@ document.addEventListener('DOMContentLoaded', function () {
 // Auth Dialog Functions
 function toggleDialog(dialogId, show) {
     const dialog = document.getElementById(dialogId);
+    if (!dialog) {
+        return;
+    }
+
     if (show) {
         dialog.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
@@ -1493,26 +1497,41 @@ function updateNavigation() {
     const authToken = localStorage.getItem('authToken');
     const navLinks = document.querySelector('.nav-links');
 
+    if (!navLinks) {
+        return;
+    }
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const isActive = (href) => {
+        if (href === 'index.html') {
+            return currentPage === '' || currentPage === 'index.html';
+        }
+        return currentPage === href;
+    };
+
     // Clear existing navigation links
     navLinks.innerHTML = '';
 
     if (authToken) {
         // User is logged in, show all navigation links
         navLinks.innerHTML = `
-            <li><a href="index.html" ${window.location.pathname === '/index.html' || window.location.pathname === '/' ? 'class="active"' : ''}>Home</a></li>
-            <li><a href="dashboard.html" ${window.location.pathname === '/dashboard.html' ? 'class="active"' : ''}>Dashboard</a></li>
-            <li><a href="AI-support.html" ${window.location.pathname === '/AI-support.html' ? 'class="active"' : ''}>AI-Support</a></li>
-            <li><a href="mental-home.html" ${window.location.pathname === '/mental-home.html' ? 'class="active"' : ''}>Mental Health</a></li>
-            <li><a href="appointment.html" ${window.location.pathname === '/appointment.html' ? 'class="active"' : ''}>Appointment</a></li>
+            <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}>Home</a></li>
+            <li><a href="dashboard.html" ${isActive('dashboard.html') ? 'class="active"' : ''}>Dashboard</a></li>
+            <li><a href="AI-support.html" ${isActive('AI-support.html') ? 'class="active"' : ''}>AI-Support</a></li>
+            <li><a href="mental-home.html" ${isActive('mental-home.html') ? 'class="active"' : ''}>Mental Health</a></li>
+            <li><a href="appointment.html" ${isActive('appointment.html') ? 'class="active"' : ''}>Appointment</a></li>
+            <li><a href="mood.html" ${isActive('mood.html') ? 'class="active"' : ''}>Mood Tracker</a></li>
+            <li><a href="resources.html" ${isActive('resources.html') ? 'class="active"' : ''}>Resources</a></li>
         `;
     } else {
-        // User is not logged in, show default navigation
+        // User is not logged in, show guest navigation
         navLinks.innerHTML = `
-            <li><a href="#home" ${window.location.hash === '#home' || window.location.hash === '' ? 'class="active"' : ''}>Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#resources">Resources</a></li>
-            <li><a href="#statistics">Statistics</a></li>
+            <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}>Home</a></li>
+            <li><a href="AI-support.html" ${isActive('AI-support.html') ? 'class="active"' : ''}>AI-Support</a></li>
+            <li><a href="mental-home.html" ${isActive('mental-home.html') ? 'class="active"' : ''}>Mental Health</a></li>
+            <li><a href="appointment.html" ${isActive('appointment.html') ? 'class="active"' : ''}>Appointment</a></li>
+            <li><a href="mood.html" ${isActive('mood.html') ? 'class="active"' : ''}>Mood Tracker</a></li>
+            <li><a href="resources.html" ${isActive('resources.html') ? 'class="active"' : ''}>Resources</a></li>
         `;
     }
 }
@@ -1647,7 +1666,9 @@ async function checkAndUpdateMoodButton() {
     if (!authToken) return;
     
     try {
-        const apiUrl = `${window.ENV_API_URL || ''}/api/mood/recent`;
+        const baseApiUrlRaw = window.ENV_API_URL || (window.ENV_CONFIG && window.ENV_CONFIG.backendApiUrl) || '';
+        const baseApiUrl = baseApiUrlRaw.replace(/\/$/, '');
+        const apiUrl = `${baseApiUrl}/api/mood/recent`;
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -1680,7 +1701,7 @@ async function checkAndUpdateMoodButton() {
                 
                 // Update desktop mood button
                 moodTrackerBtn.innerHTML = `
-                    <span style="font-size: 16px;">${emoji}</span> ${moodData.label}
+                    <span style="font-size: 16px;">${emoji}</span> Mood: ${moodData.label}
                 `;
                 
                 // Update mobile mood button with simplified text
@@ -1713,6 +1734,35 @@ async function checkAndUpdateMoodButton() {
     }
 }
 
+// Open login dialog on index page when redirected from a protected action.
+function handlePendingLoginRedirect() {
+    const loginDialog = document.getElementById('login-dialog');
+    const shouldOpenFromStorage = localStorage.getItem('mindspace_open_login_dialog') === 'true';
+    const params = new URLSearchParams(window.location.search);
+    const shouldOpenFromQuery = params.get('openLogin') === '1';
+
+    if (!loginDialog || typeof toggleDialog !== 'function' || (!shouldOpenFromStorage && !shouldOpenFromQuery)) {
+        return;
+    }
+
+    const message = localStorage.getItem('mindspace_login_required_message') || 'Please login to continue.';
+    if (typeof showInfo === 'function') {
+        showInfo(message);
+    }
+
+    toggleDialog('login-dialog', true);
+
+    localStorage.removeItem('mindspace_open_login_dialog');
+    localStorage.removeItem('mindspace_login_required_message');
+
+    if (shouldOpenFromQuery) {
+        params.delete('openLogin');
+        const nextQuery = params.toString();
+        const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ''}${window.location.hash}`;
+        window.history.replaceState({}, '', nextUrl);
+    }
+}
+
 // Call the function when document is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // ...existing code...
@@ -1722,6 +1772,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (authToken) {
         checkAndUpdateMoodButton();
     }
+
+    handlePendingLoginRedirect();
     
     // ...existing code...
 });

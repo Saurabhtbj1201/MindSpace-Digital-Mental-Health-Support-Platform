@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check authentication
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
-        window.location.href = 'index.html';
+        showGuestLockedState();
         return;
     }
 
@@ -29,65 +29,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize page
     initializePage();
 
+    function showGuestLockedState() {
+        const moduleContainer = document.getElementById('module-container');
+        if (moduleContainer) {
+            moduleContainer.innerHTML = `
+                <div class="module-section active">
+                    <div class="module-header">
+                        <h2><i class="fas fa-lock"></i> Login Required</h2>
+                        <p>Please login to view and start your mental health assessment.</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <button id="mental-health-login-btn" class="btn-primary" type="button">Login to Continue</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.querySelectorAll('.progress-item').forEach((item) => {
+            item.classList.remove('active');
+        });
+
+        const loginBtn = document.getElementById('mental-health-login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function () {
+                if (typeof window.requireAuth === 'function') {
+                    window.requireAuth('Login to start your mental health assessment.');
+                }
+            });
+        }
+    }
+
     async function initializePage() {
-        updateUserProfile();
         await loadModuleProgress();
         setupEventListeners();
         loadCurrentModule();
     }
 
-    function updateUserProfile() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData) {
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            const headerUsername = document.getElementById('header-username');
-            const headerAvatar = document.getElementById('header-avatar');
-            
-            if (headerUsername) headerUsername.textContent = userData.firstName || 'User';
-            if (headerAvatar) headerAvatar.textContent = initials || 'U';
-        }
-        setupProfileDropdown();
-    }
-
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        if (profileTrigger && profileDropdown) {
-            profileTrigger.addEventListener('click', () => {
-                profileDropdown.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-        }
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                showSuccess('Logged out successfully!');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
-        }
-    }
-
     function setupEventListeners() {
-        // Mood tracker button
-        const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-        if (moodTrackerBtn) {
-            moodTrackerBtn.addEventListener('click', () => {
-                window.location.href = 'mood.html';
-            });
-        }
-
         // Progress item clicks
         document.querySelectorAll('.progress-item').forEach(item => {
             item.addEventListener('click', () => {

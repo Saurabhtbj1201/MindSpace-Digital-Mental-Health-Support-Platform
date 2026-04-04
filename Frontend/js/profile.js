@@ -33,54 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the page
     initializePage();
     
-    // Check for recent mood tracking and update the mood button
-    async function checkAndUpdateMoodButton() {
-        if (!authToken) return;
-        
-        try {
-            const apiUrl = `${apiConfig.backendApiUrl}/api/mood/recent`;
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers
-            });
-            
-            const data = await response.json();
-            
-            if (data.success && data.isRecent) {
-                // User has tracked mood within the last 2 hours
-                const moodTrackerBtn = document.querySelector('.mood-tracker-btn');
-                if (moodTrackerBtn) {
-                    const moodData = data.data;
-                    
-                    // Emoji map for moods
-                    const moodEmojis = {
-                        'Angry': '😠',
-                        'Disgust': '🤢',
-                        'Fear': '😨',
-                        'Happy': '😄',
-                        'Neutral': '😐',
-                        'Sad': '😢',
-                        'Surprise': '😲'
-                    };
-                    
-                    const emoji = moodEmojis[moodData.label] || '📊';
-                    
-                    moodTrackerBtn.innerHTML = `
-                        <span style="font-size: 16px;">${emoji}</span> ${moodData.label}
-                    `;
-                    
-                    // Add a CSS class for styling
-                    moodTrackerBtn.classList.add('current-mood');
-                }
-            }
-        } catch (error) {
-            console.error('Error checking recent mood:', error);
-        }
-    }
-    
-    // Check and update mood button
-    checkAndUpdateMoodButton();
-    
     // Function to initialize the page
     async function initializePage() {
         // Load user profile data
@@ -99,35 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update profile information in header
     function updateProfileInfo(userData) {
         if (userData) {
-            const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-            const initials = ((userData.firstName || '').charAt(0) + (userData.lastName || '').charAt(0)).toUpperCase();
-            
-            // Update header profile dropdown
-            document.getElementById('header-username').textContent = userData.firstName || 'User';
-            document.getElementById('header-avatar').textContent = initials || 'U';
-            
             // Update welcome message
             document.getElementById('welcome-message').textContent = `👋 Hi, Welcome ${userData.firstName || 'User'}!`;
-            
-            // Set up dropdown toggle
-            setupProfileDropdown();
-            
-            // Handle logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Clear authentication data
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userData');
-                
-                // Show success notification
-                showSuccess('Logged out successfully!');
-                
-                // Redirect to home page after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            });
         }
     }
     
@@ -978,30 +903,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Fix profile dropdown toggle
-    function setupProfileDropdown() {
-        const profileTrigger = document.getElementById('profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        if (!profileTrigger || !profileDropdown) return;
-        
-        // Remove any previous event listeners
-        profileTrigger.onclick = null;
-        document.removeEventListener('click', closeDropdownOnClickOutside, true);
-        
-        // Toggle dropdown on trigger click
-        profileTrigger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('active');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', closeDropdownOnClickOutside, true);
-        
-        function closeDropdownOnClickOutside(event) {
-            if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        }
-    }
 });
