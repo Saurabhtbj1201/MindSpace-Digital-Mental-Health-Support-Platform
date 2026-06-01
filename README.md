@@ -7,6 +7,7 @@
   [![Student Mental Health](https://img.shields.io/badge/Focus-Student_Mental_Health-green.svg)](https://mindspace.edu)
   [![Status](https://img.shields.io/badge/Status-In_Development-yellow.svg)](https://github.com/yourusername/mindspace)
   [![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
+  [![Backend CI](https://github.com/Saurabhtbj1201/MindSpace/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Saurabhtbj1201/MindSpace/actions/workflows/backend-ci.yml)
 </div>
 
 # MindSpace 🧠
@@ -265,6 +266,33 @@ python -m pytest tests/
 - Frontend component testing
 - ML model accuracy testing
 - Security and penetration testing
+
+---
+
+## ⚙️ Continuous Integration
+
+[![Backend CI](https://github.com/Saurabhtbj1201/MindSpace/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Saurabhtbj1201/MindSpace/actions/workflows/backend-ci.yml)
+
+The project uses **GitHub Actions** for automated CI on every push and pull request targeting `main`.
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `backend-ci.yml` | `push`/`pull_request` → `main` | `npm ci` → lint (if config present) → `npm test` |
+| `main_mindspace.yml` | `push` → `main` | Build & deploy backend to Azure |
+
+### Adding Lint
+The lint step activates automatically once an ESLint config file is added to `Backend/`:
+```bash
+cd Backend
+npm install --save-dev eslint
+npx eslint --init
+```
+Then add a `lint` script to `Backend/package.json`:
+```json
+"scripts": {
+  "lint": "eslint . --ext .js"
+}
+```
 
 ---
 

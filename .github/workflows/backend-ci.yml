@@ -1,0 +1,56 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  test:
+    name: Install, Lint & Test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint step – only runs when an ESLint config is present in Backend/
+      # Add .eslintrc.js (or equivalent) to enable this gate.
+      - name: Lint (ESLint)
+        if: ${{ hashFiles('Backend/.eslintrc*', 'Backend/eslint.config*') != '' }}
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm test
+        env:
+          # Provide dummy values so modules that read env vars don't crash
+          # during unit tests. Real secrets are never needed in CI.
+          NODE_ENV: test
+          JWT_SECRET: ci-test-secret
+          MONGO_URI: mongodb://localhost:27017/mindspace_test
