@@ -11,19 +11,16 @@ const MentalHealthReportSchema = new mongoose.Schema({
   vitals: {
     systolic: {
       type: Number,
-      required: true,
       min: 70,
       max: 250
     },
     diastolic: {
       type: Number,
-      required: true,
       min: 40,
       max: 150
     },
     heartRate: {
       type: Number,
-      required: true,
       min: 40,
       max: 200
     },
