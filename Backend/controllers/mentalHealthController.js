@@ -131,6 +131,24 @@ const analyzeMentalHealth = async (req, res) => {
   try {
     const { vitals, lifestyle, dass21, gad7, phq9 } = req.body;
     
+    // ── Idempotency check ────────────────────────────────────────────────────
+    // Reject if a report was already created for this user in the last 60 s.
+    // This is the server-side safety net against duplicate submissions that
+    // bypassed the frontend guard (back button, direct API call, race condition).
+    const sixtySecondsAgo = new Date(Date.now() - 60 * 1000);
+    const recentReport = await MentalHealthReport.findOne({
+      user: req.user.id,
+      createdAt: { $gte: sixtySecondsAgo }
+    }).select('_id createdAt').lean();
+
+    if (recentReport) {
+      return res.status(409).json({
+        success: false,
+        message: 'A report was already generated moments ago. Please wait before submitting again.',
+        reportId: recentReport._id
+      });
+    }
+
     // Validate required data
     if (!vitals || !dass21 || !gad7 || !phq9) {
       return res.status(400).json({
@@ -141,22 +159,14 @@ const analyzeMentalHealth = async (req, res) => {
     
     // Validate and normalize vitals data
     let processedVitals = {
-      systolic: normalizeNumber(vitals.systolic),
-      diastolic: normalizeNumber(vitals.diastolic),
-      heartRate: normalizeNumber(vitals.heartRate),
       sleepDuration: normalizeNumber(vitals.sleepDuration),
       temperature: normalizeNumber(vitals.temperature)
     };
 
-    if (
-      processedVitals.systolic === null ||
-      processedVitals.diastolic === null ||
-      processedVitals.heartRate === null ||
-      processedVitals.sleepDuration === null
-    ) {
+    if (processedVitals.sleepDuration === null) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required vital signs data'
+        message: 'Missing required vitals data: sleepDuration'
       });
     }
 
@@ -569,16 +579,6 @@ function generateRecommendations(dass21, gad7, phq9, vitals, lifestyle) {
       title: 'Physical Activity',
       description: 'Start with 30 minutes of moderate exercise 3-4 times per week. Even light walking can significantly improve mental health.',
       priority: 'medium'
-    });
-  }
-  
-  // Blood pressure recommendations
-  if (vitals.systolic > 140 || vitals.diastolic > 90) {
-    recommendations.push({
-      category: 'Physical Health',
-      title: 'Blood Pressure Management',
-      description: 'Your blood pressure is elevated. Consider reducing sodium intake, increasing physical activity, and consulting a healthcare provider.',
-      priority: 'high'
     });
   }
   

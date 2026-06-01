@@ -6,8 +6,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    // ── Submission guard ────────────────────────────────────────────────────────
+    // If the user already submitted this session, send them straight to the
+    // report page so a back-button or refresh can't trigger a second submission.
+    if (sessionStorage.getItem('mindspace_assessment_submitted') === 'true') {
+        window.location.replace('mental-report.html');
+        return;
+    }
+
     // Initialize variables
     let currentModule = 'vitals';
+    let isSubmitting = false; // Prevents double-clicks / re-entrancy
     let moduleProgress = {
         vitals: { completed: false, data: null },
         dass21: { completed: false, data: null },
@@ -161,21 +170,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label for="systolic"><i class="fas fa-heart"></i> Systolic Blood Pressure (mmHg)</label>
-                        <input type="number" id="systolic" class="form-input" placeholder="e.g., 120" min="70" max="200" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="diastolic"><i class="fas fa-heart"></i> Diastolic Blood Pressure (mmHg)</label>
-                        <input type="number" id="diastolic" class="form-input" placeholder="e.g., 80" min="40" max="120" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="heart-rate"><i class="fas fa-heartbeat"></i> Heart Rate (BPM)</label>
-                        <input type="number" id="heart-rate" class="form-input" placeholder="e.g., 72" min="40" max="200" required>
-                    </div>
-                    
                     <div class="form-group">
                         <label for="sleep-duration"><i class="fas fa-bed"></i> Average Sleep Duration (hours)</label>
                         <input type="number" id="sleep-duration" class="form-input" placeholder="e.g., 7" min="0" max="24" step="0.5" required>
@@ -455,9 +449,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const lifestyle = data.lifestyle || {};
             
             const elements = {
-                'systolic': vitals.systolic,
-                'diastolic': vitals.diastolic,
-                'heart-rate': vitals.heartRate,
                 'sleep-duration': vitals.sleepDuration,
                 'temperature': vitals.temperature,
                 'exercise-frequency': lifestyle.exerciseFrequency,
@@ -515,9 +506,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.saveVitalsModule = async function() {
         const vitalsData = {
-            systolic: parseInt(document.getElementById('systolic')?.value) || null,
-            diastolic: parseInt(document.getElementById('diastolic')?.value) || null,
-            heartRate: parseInt(document.getElementById('heart-rate')?.value) || null,
             sleepDuration: parseFloat(document.getElementById('sleep-duration')?.value) || null,
             temperature: parseFloat(document.getElementById('temperature')?.value) || null
         };
@@ -531,8 +519,8 @@ document.addEventListener('DOMContentLoaded', function() {
             medications: document.getElementById('medications')?.value || ''
         };
 
-        if (!vitalsData.systolic || !vitalsData.diastolic || !vitalsData.heartRate || !vitalsData.sleepDuration) {
-            showWarning('Please fill in all required vital signs.');
+        if (!vitalsData.sleepDuration) {
+            showWarning('Please enter your average sleep duration.');
             return;
         }
 
@@ -599,6 +587,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     window.savePHQ9Module = async function() {
+        // ── Double-submit guard ──────────────────────────────────────────────
+        if (isSubmitting) return;
+
         const answers = [];
         let allAnswered = true;
         
@@ -616,16 +607,42 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        await saveModuleProgress('phq9', answers);
+        // ── Lock the UI ──────────────────────────────────────────────────────
+        isSubmitting = true;
+        const submitBtn = document.querySelector(
+            'button[onclick="window.savePHQ9Module()"]'
+        );
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML =
+                '<i class="fas fa-spinner fa-spin"></i> Generating Report…';
+        }
+
+        const saved = await saveModuleProgress('phq9', answers);
+        if (!saved) {
+            // Saving failed — re-enable so the user can retry
+            isSubmitting = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML =
+                    'Save &amp; Generate Report <i class="fas fa-chart-line"></i>';
+            }
+            return;
+        }
+
         moduleProgress.phq9.completed = true;
         moduleProgress.phq9.data = answers;
         updateProgressIndicator('phq9', true);
-        
-        // Redirect to mental-report page for final analysis
-        showSuccess('Assessment completed! Redirecting to generate your detailed report...');
+
+        // ── Mark session as submitted BEFORE navigating ──────────────────────
+        // This ensures back-button / refresh is caught on re-entry.
+        sessionStorage.setItem('mindspace_assessment_submitted', 'true');
+
+        showSuccess('Assessment completed! Redirecting to generate your detailed report…');
         setTimeout(() => {
-            window.location.href = 'mental-report.html?generate=true';
-        }, 2000);
+            // Use replace() so the assessment page is removed from history
+            window.location.replace('mental-report.html?generate=true');
+        }, 1500);
     };
 
     async function saveModuleProgress(moduleName, data) {
