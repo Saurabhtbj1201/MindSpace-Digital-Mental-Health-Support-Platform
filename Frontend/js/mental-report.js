@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    // Clear the one-time submission guard set by mental-health-modular.js so
+    // the user can start a fresh assessment in the future from this device.
+    sessionStorage.removeItem('mindspace_assessment_submitted');
+
     // API configuration
     const apiConfig = {
         backendApiUrl: window.ENV_CONFIG?.backendApiUrl || window.ENV_API_URL || 'http://localhost:5001'
@@ -237,134 +241,167 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function displayDetailedReport(container, reportData) {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const reportDate = new Date(reportData.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+        const reportDate = new Date(reportData.createdAt).toLocaleDateString('en-IN', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
 
-        // Check for emergency situations
         const isEmergency = reportData.overallRisk === 'severe' || reportData.overallRisk === 'high';
 
+        // ── Report metadata banner ─────────────────────────────────────────
         let html = `
             <div class="report-metadata">
-                <div class="report-info">
-                    <h3>Report Information</h3>
-                    <p><strong>Patient:</strong> ${userData.firstName} ${userData.lastName}</p>
-                    <p><strong>Generated:</strong> ${reportDate}</p>
-                    <p><strong>Report ID:</strong> ${reportData._id}</p>
-                    <p><strong>Overall Risk Level:</strong> <span class="risk-${reportData.overallRisk}">${reportData.overallRisk.toUpperCase()}</span></p>
+                <div class="report-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="fas fa-user"></i> Patient</span>
+                        <span class="meta-value">${userData.firstName || ''} ${userData.lastName || ''}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="fas fa-calendar-alt"></i> Generated</span>
+                        <span class="meta-value">${reportDate}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="fas fa-hashtag"></i> Report ID</span>
+                        <span class="meta-value report-id">${reportData._id}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="fas fa-shield-alt"></i> Overall Risk</span>
+                        <span class="meta-value risk-badge risk-${reportData.overallRisk}">${reportData.overallRisk.toUpperCase()}</span>
+                    </div>
                 </div>
             </div>
         `;
 
+        // ── Emergency alert ───────────────────────────────────────────────
         if (isEmergency) {
             html += `
-                <div class="emergency-notice">
+                <div class="emergency-notice" role="alert">
                     <h3><i class="fas fa-exclamation-triangle"></i> Immediate Professional Support Recommended</h3>
                     <p>Your assessment indicates significant mental health concerns that require immediate attention. Please consider reaching out to a mental health professional or crisis support service.</p>
                     <div class="emergency-actions">
-                        <a href="tel:9152987821" class="emergency-btn">
-                            <i class="fas fa-phone"></i> Crisis Helpline: 9152987821
-                        </a>
-                        <a href="tel:112" class="emergency-btn">
-                            <i class="fas fa-ambulance"></i> Emergency: 112
-                        </a>
-                        <a href="appointment.html" class="emergency-btn">
-                            <i class="fas fa-calendar"></i> Book Counseling Session
-                        </a>
+                        <a href="tel:9152987821" class="emergency-btn"><i class="fas fa-phone"></i> Crisis Helpline: 9152987821</a>
+                        <a href="tel:112" class="emergency-btn"><i class="fas fa-ambulance"></i> Emergency: 112</a>
+                        <a href="appointment.html" class="emergency-btn"><i class="fas fa-calendar"></i> Book Counselling</a>
                     </div>
                 </div>
             `;
         }
 
-        // Mental Health Assessment Results
+        // ── Score gauge section ───────────────────────────────────────────
+        // Scale metadata: [label, tool, score, maxScore, severity, thresholds]
+        const scales = [
+            {
+                id: 'depression-dass',
+                label: 'Depression',
+                tool: 'DASS-21',
+                score: reportData.dass21.depression.score,
+                max: 42,
+                severity: reportData.dass21.depression.severity,
+                description: getScoreDescription('depression', reportData.dass21.depression.severity),
+                // Normal / Mild / Moderate / Severe cutpoints
+                bands: [9, 13, 20, 42]
+            },
+            {
+                id: 'anxiety-dass',
+                label: 'Anxiety',
+                tool: 'DASS-21',
+                score: reportData.dass21.anxiety.score,
+                max: 42,
+                severity: reportData.dass21.anxiety.severity,
+                description: getScoreDescription('anxiety', reportData.dass21.anxiety.severity),
+                bands: [7, 9, 14, 42]
+            },
+            {
+                id: 'stress-dass',
+                label: 'Stress',
+                tool: 'DASS-21',
+                score: reportData.dass21.stress.score,
+                max: 42,
+                severity: reportData.dass21.stress.severity,
+                description: getScoreDescription('stress', reportData.dass21.stress.severity),
+                bands: [14, 18, 25, 42]
+            },
+            {
+                id: 'anxiety-gad7',
+                label: 'Generalised Anxiety',
+                tool: 'GAD-7',
+                score: reportData.gad7.score,
+                max: 21,
+                severity: reportData.gad7.severity,
+                description: getScoreDescription('gad7', reportData.gad7.severity),
+                bands: [4, 9, 14, 21]
+            },
+            {
+                id: 'depression-phq9',
+                label: 'Depression Screening',
+                tool: 'PHQ-9',
+                score: reportData.phq9.score,
+                max: 27,
+                severity: reportData.phq9.severity,
+                description: getScoreDescription('phq9', reportData.phq9.severity),
+                bands: [4, 9, 14, 27]
+            }
+        ];
+
         html += `
             <div class="report-section">
                 <h3><i class="fas fa-brain"></i> Mental Health Assessment Results</h3>
-                <div class="score-grid">
-                    <div class="score-card ${reportData.dass21.depression.severity}">
-                        <div class="score-value">${reportData.dass21.depression.score}</div>
-                        <div class="score-label">Depression (DASS-21)</div>
-                        <div class="score-severity">${reportData.dass21.depression.severity}</div>
-                        <div class="score-description">
-                            ${getScoreDescription('depression', reportData.dass21.depression.severity)}
-                        </div>
-                    </div>
-                    <div class="score-card ${reportData.dass21.anxiety.severity}">
-                        <div class="score-value">${reportData.dass21.anxiety.score}</div>
-                        <div class="score-label">Anxiety (DASS-21)</div>
-                        <div class="score-severity">${reportData.dass21.anxiety.severity}</div>
-                        <div class="score-description">
-                            ${getScoreDescription('anxiety', reportData.dass21.anxiety.severity)}
-                        </div>
-                    </div>
-                    <div class="score-card ${reportData.dass21.stress.severity}">
-                        <div class="score-value">${reportData.dass21.stress.score}</div>
-                        <div class="score-label">Stress (DASS-21)</div>
-                        <div class="score-severity">${reportData.dass21.stress.severity}</div>
-                        <div class="score-description">
-                            ${getScoreDescription('stress', reportData.dass21.stress.severity)}
-                        </div>
-                    </div>
-                    <div class="score-card ${reportData.gad7.severity}">
-                        <div class="score-value">${reportData.gad7.score}</div>
-                        <div class="score-label">Generalized Anxiety</div>
-                        <div class="score-severity">${reportData.gad7.severity}</div>
-                        <div class="score-description">
-                            ${getScoreDescription('gad7', reportData.gad7.severity)}
-                        </div>
-                    </div>
-                    <div class="score-card ${reportData.phq9.severity}">
-                        <div class="score-value">${reportData.phq9.score}</div>
-                        <div class="score-label">Depression Screening</div>
-                        <div class="score-severity">${reportData.phq9.severity}</div>
-                        <div class="score-description">
-                            ${getScoreDescription('phq9', reportData.phq9.severity)}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <div class="gauge-grid">
         `;
 
-        // Health Vitals Analysis
+        scales.forEach(s => {
+            const pct = Math.min(100, Math.round((s.score / s.max) * 100));
+            const severityIcon = {
+                normal: 'fa-check-circle',
+                minimal: 'fa-check-circle',
+                mild: 'fa-exclamation-circle',
+                moderate: 'fa-exclamation-triangle',
+                severe: 'fa-times-circle'
+            }[s.severity] || 'fa-circle';
+
+            html += `
+                <div class="gauge-card sev-${s.severity}" role="region" aria-label="${s.label} score ${s.score} of ${s.max}">
+                    <div class="gauge-top">
+                        <div class="gauge-label-block">
+                            <span class="gauge-tool">${s.tool}</span>
+                            <span class="gauge-name">${s.label}</span>
+                        </div>
+                        <div class="gauge-score-block">
+                            <span class="gauge-score">${s.score}</span>
+                            <span class="gauge-max">/${s.max}</span>
+                        </div>
+                    </div>
+
+                    <div class="gauge-bar-track" aria-hidden="true">
+                        <div class="gauge-bar-fill" data-pct="${pct}" style="width:0%;"></div>
+                    </div>
+
+                    <div class="gauge-band-labels" aria-hidden="true">
+                        <span>Normal</span><span>Mild</span><span>Moderate</span><span>Severe</span>
+                    </div>
+
+                    <div class="gauge-footer">
+                        <span class="severity-chip sev-${s.severity}">
+                            <i class="fas ${severityIcon}"></i> ${s.severity.charAt(0).toUpperCase() + s.severity.slice(1)}
+                        </span>
+                        <span class="gauge-description">${s.description}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+
+        // ── Health vitals (sleep + optional temperature only) ─────────────
         html += `
             <div class="report-section">
-                <h3><i class="fas fa-heartbeat"></i> Health Vitals Analysis</h3>
+                <h3><i class="fas fa-heartbeat"></i> Health &amp; Lifestyle Snapshot</h3>
                 <div class="vitals-grid">
                     <div class="vital-card">
-                        <div class="vital-icon">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                        <div class="vital-info">
-                            <h4>Blood Pressure</h4>
-                            <div class="vital-value">${reportData.vitals.systolic}/${reportData.vitals.diastolic} mmHg</div>
-                            <div class="vital-status ${getVitalStatusClass('bp', reportData.vitals.systolic, reportData.vitals.diastolic)}">
-                                ${getVitalStatusText('bp', reportData.vitals.systolic, reportData.vitals.diastolic)}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vital-card">
-                        <div class="vital-icon">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="vital-info">
-                            <h4>Heart Rate</h4>
-                            <div class="vital-value">${reportData.vitals.heartRate} BPM</div>
-                            <div class="vital-status ${getVitalStatusClass('hr', reportData.vitals.heartRate)}">
-                                ${getVitalStatusText('hr', reportData.vitals.heartRate)}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vital-card">
-                        <div class="vital-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
+                        <div class="vital-icon"><i class="fas fa-bed"></i></div>
                         <div class="vital-info">
                             <h4>Sleep Duration</h4>
-                            <div class="vital-value">${reportData.vitals.sleepDuration} hours</div>
+                            <div class="vital-value">${reportData.vitals.sleepDuration} hrs</div>
                             <div class="vital-status ${getVitalStatusClass('sleep', reportData.vitals.sleepDuration)}">
                                 ${getVitalStatusText('sleep', reportData.vitals.sleepDuration)}
                             </div>
@@ -372,53 +409,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     ${reportData.vitals.temperature ? `
                     <div class="vital-card">
-                        <div class="vital-icon">
-                            <i class="fas fa-thermometer-half"></i>
-                        </div>
+                        <div class="vital-icon"><i class="fas fa-thermometer-half"></i></div>
                         <div class="vital-info">
                             <h4>Body Temperature</h4>
-                            <div class="vital-value">${reportData.vitals.temperature}°F</div>
+                            <div class="vital-value">${reportData.vitals.temperature}&deg;F</div>
                             <div class="vital-status ${getVitalStatusClass('temp', reportData.vitals.temperature)}">
                                 ${getVitalStatusText('temp', reportData.vitals.temperature)}
                             </div>
                         </div>
-                    </div>
-                    ` : ''}
+                    </div>` : ''}
                 </div>
             </div>
         `;
 
-        // Lifestyle Summary
+        // ── Lifestyle summary ─────────────────────────────────────────────
         if (reportData.lifestyle) {
             html += `
                 <div class="report-section">
                     <h3><i class="fas fa-running"></i> Lifestyle Summary</h3>
                     <div class="lifestyle-summary">
-                        <div class="lifestyle-item">
-                            <strong>Exercise Frequency:</strong> ${formatLifestyleValue(reportData.lifestyle.exerciseFrequency)}
-                        </div>
-                        <div class="lifestyle-item">
-                            <strong>Smoking Status:</strong> ${formatLifestyleValue(reportData.lifestyle.smokingStatus)}
-                        </div>
-                        <div class="lifestyle-item">
-                            <strong>Alcohol Consumption:</strong> ${formatLifestyleValue(reportData.lifestyle.alcoholConsumption)}
-                        </div>
-                        ${reportData.lifestyle.screenTime ? `
-                        <div class="lifestyle-item">
-                            <strong>Daily Screen Time:</strong> ${reportData.lifestyle.screenTime} hours
-                        </div>
-                        ` : ''}
+                        ${reportData.lifestyle.exerciseFrequency ? `<div class="lifestyle-item"><strong>Exercise Frequency</strong>${formatLifestyleValue(reportData.lifestyle.exerciseFrequency)}</div>` : ''}
+                        ${reportData.lifestyle.smokingStatus ? `<div class="lifestyle-item"><strong>Smoking Status</strong>${formatLifestyleValue(reportData.lifestyle.smokingStatus)}</div>` : ''}
+                        ${reportData.lifestyle.alcoholConsumption ? `<div class="lifestyle-item"><strong>Alcohol Consumption</strong>${formatLifestyleValue(reportData.lifestyle.alcoholConsumption)}</div>` : ''}
+                        ${reportData.lifestyle.screenTime ? `<div class="lifestyle-item"><strong>Daily Screen Time</strong>${reportData.lifestyle.screenTime} hrs</div>` : ''}
+                        ${reportData.lifestyle.chronicConditions ? `<div class="lifestyle-item lifestyle-item--wide"><strong>Chronic Conditions</strong>${reportData.lifestyle.chronicConditions}</div>` : ''}
+                        ${reportData.lifestyle.medications ? `<div class="lifestyle-item lifestyle-item--wide"><strong>Current Medications</strong>${reportData.lifestyle.medications}</div>` : ''}
                     </div>
                 </div>
             `;
         }
 
-        // Detailed Recommendations
+        // ── Recommendations ───────────────────────────────────────────────
         html += `
             <div class="report-section">
-                <h3><i class="fas fa-lightbulb"></i> Personalized Recommendations</h3>
+                <h3><i class="fas fa-lightbulb"></i> Personalised Recommendations</h3>
                 <div class="recommendations-detailed">
-                    ${reportData.recommendations && reportData.recommendations.length > 0 ? 
+                    ${reportData.recommendations && reportData.recommendations.length > 0 ?
                         reportData.recommendations.map(rec => `
                             <div class="recommendation-item ${rec.priority}">
                                 <div class="recommendation-header">
@@ -428,24 +454,39 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="recommendation-category">${rec.category}</div>
                                 <p>${rec.description}</p>
                             </div>
-                        `).join('') : 
+                        `).join('') :
                         '<div class="no-recommendations">No specific recommendations at this time. Continue monitoring your mental health regularly.</div>'
                     }
                 </div>
             </div>
         `;
 
-        // Next Steps
+        // ── Next steps ────────────────────────────────────────────────────
         html += `
             <div class="report-section">
                 <h3><i class="fas fa-route"></i> Next Steps</h3>
-                <div class="next-steps">
-                    ${generateNextSteps(reportData)}
-                </div>
+                <div class="next-steps">${generateNextSteps(reportData)}</div>
+            </div>
+        `;
+
+        // ── Disclaimer ────────────────────────────────────────────────────
+        html += `
+            <div class="report-disclaimer">
+                <i class="fas fa-info-circle"></i>
+                <p>This report is generated by the MindSpace AI system for informational purposes only and does not constitute medical advice, diagnosis, or treatment. Please consult a qualified healthcare professional for proper evaluation.</p>
             </div>
         `;
 
         container.innerHTML = html;
+
+        // Animate gauges after paint
+        requestAnimationFrame(() => {
+            container.querySelectorAll('.gauge-bar-fill').forEach(bar => {
+                const pct = bar.dataset.pct;
+                // Tiny delay so the CSS transition fires
+                setTimeout(() => { bar.style.width = pct + '%'; }, 80);
+            });
+        });
     }
 
     function generateNextSteps(reportData) {
@@ -576,19 +617,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupReportActions(reportData) {
+        // Print button
+        const printBtn = document.getElementById('print-report');
+        if (printBtn) {
+            printBtn.onclick = () => window.print();
+        }
+
         // Email current report button
         const emailCurrentBtn = document.getElementById('email-current-report');
         if (emailCurrentBtn) {
             emailCurrentBtn.onclick = async function() {
                 try {
-                    // Show loading state
                     const originalText = emailCurrentBtn.innerHTML;
-                    emailCurrentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    emailCurrentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…';
                     emailCurrentBtn.disabled = true;
 
                     const response = await fetch(`${apiConfig.backendApiUrl}/api/mental-health/email-report`, {
-                        method: 'POST',
-                        headers,
+                        method: 'POST', headers,
                         body: JSON.stringify({ reportId: reportData._id })
                     });
 
@@ -600,8 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } catch (error) {
                     showError('Failed to send email. Please try again.');
                 } finally {
-                    // Reset button state
-                    emailCurrentBtn.innerHTML = originalText;
+                    emailCurrentBtn.innerHTML = '<i class="fas fa-envelope"></i> Email Report';
                     emailCurrentBtn.disabled = false;
                 }
             };
@@ -612,21 +656,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (downloadBtn) {
             downloadBtn.onclick = async function() {
                 try {
-                    // Show loading state
                     const originalText = downloadBtn.innerHTML;
-                    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+                    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF…';
                     downloadBtn.disabled = true;
-
-                    // Generate PDF using client-side library
                     await generateAndDownloadPDF(reportData);
-                    
                     showSuccess('PDF report downloaded successfully!');
                 } catch (error) {
                     console.error('PDF download error:', error);
                     showError('Failed to download PDF. Please try again.');
                 } finally {
-                    // Reset button state
-                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
                     downloadBtn.disabled = false;
                 }
             };
