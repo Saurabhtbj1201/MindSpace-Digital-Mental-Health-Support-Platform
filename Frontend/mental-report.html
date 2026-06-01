@@ -4,63 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Health Report - MindSpace</title>
-    
+    <meta name="description" content="View your personalised MindSpace mental health assessment report including DASS-21, GAD-7 and PHQ-9 results with severity charts and expert recommendations.">
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="images/ico.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/ico.png">
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/mental-report.css">
-    <!-- Google tag (gtag.js) -->
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RGQVVS916K"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-RGQVVS916K');
     </script>
 </head>
 <body>
     <div class="notifications-container" id="notifications-container"></div>
-    
+
+    <!-- Print-only branded header (hidden on screen) -->
+    <div class="print-header" aria-hidden="true">
+        <div class="print-header-inner">
+            <span class="print-logo"><i class="fas fa-brain"></i> MindSpace</span>
+            <span class="print-tagline">Mental Health Assessment Report</span>
+        </div>
+        <hr class="print-divider">
+    </div>
+
     <script src="js/header-component.js"></script>
 
     <main class="analysis-container">
         <div class="container">
-            <!-- Report Generation Section -->
-            <div id="report-generation-section" style="display: none;">
+
+            <!-- ── Report Generation Section ─────────────────────────────── -->
+            <div id="report-generation-section" style="display:none;">
                 <div class="report-card">
                     <div class="card-header">
-                        <h2><i class="fas fa-chart-line"></i> Generate New Report</h2>
-                        <p>Complete assessment analysis and generate detailed mental health report</p>
+                        <h2><i class="fas fa-chart-line"></i> Generating Your Report</h2>
+                        <p>Analysing your responses and building a comprehensive mental health report&hellip;</p>
                     </div>
                     <div class="card-content">
                         <div id="analysis-progress">
                             <div class="progress-step">
                                 <i class="fas fa-spinner fa-spin"></i>
-                                <span>Analyzing assessment data...</span>
+                                <span>Analysing assessment data&hellip;</span>
                             </div>
                         </div>
-                        <div id="analysis-results" style="display: none;">
-                            <!-- Results will be populated here -->
-                        </div>
+                        <div id="analysis-results" style="display:none;"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Current Report Display -->
-            <div id="current-report-section" style="display: none;">
-                <div class="report-card">
+            <!-- ── Current Report Display ─────────────────────────────────── -->
+            <div id="current-report-section" style="display:none;">
+                <div class="report-card" id="printable-report">
                     <div class="report-header">
-                        <h2><i class="fas fa-file-medical"></i> Your Latest Mental Health Report</h2>
+                        <h2><i class="fas fa-file-medical"></i> Your Mental Health Report</h2>
                         <div class="report-actions">
+                            <button id="print-report" class="btn-secondary" title="Print or save as PDF">
+                                <i class="fas fa-print"></i> Print / Save PDF
+                            </button>
                             <button id="download-pdf" class="btn-secondary">
                                 <i class="fas fa-download"></i> Download PDF
                             </button>
@@ -70,12 +82,12 @@
                         </div>
                     </div>
                     <div id="current-report-content">
-                        <!-- Current report will be displayed here -->
+                        <!-- Populated by mental-report.js -->
                     </div>
                 </div>
             </div>
 
-            <!-- Assessment History -->
+            <!-- ── Assessment History ──────────────────────────────────────── -->
             <div id="assessment-history-section">
                 <div class="history-card">
                     <div class="card-header">
@@ -85,16 +97,14 @@
                     <div class="card-content">
                         <div id="history-loading" class="loading-spinner">
                             <i class="fas fa-spinner fa-spin"></i>
-                            <span>Loading assessment history...</span>
+                            <span>Loading assessment history&hellip;</span>
                         </div>
-                        <div id="history-content" style="display: none;">
-                            <!-- History will be loaded here -->
-                        </div>
-                        <div id="no-history" style="display: none;">
+                        <div id="history-content" style="display:none;"></div>
+                        <div id="no-history" style="display:none;">
                             <div class="empty-state">
                                 <i class="fas fa-clipboard-list"></i>
                                 <h3>No Assessment History</h3>
-                                <p>You haven't completed any mental health assessments yet.</p>
+                                <p>You haven&rsquo;t completed any mental health assessments yet.</p>
                                 <button id="start-first-assessment" class="btn-primary">
                                     <i class="fas fa-play"></i> Start Your First Assessment
                                 </button>
@@ -103,6 +113,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
 
