@@ -1,4 +1,5 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { protect } = require('../middleware/authMiddleware');
 const {
   analyzeMentalHealth,
@@ -16,10 +17,28 @@ const router = express.Router();
 // Protect all routes
 router.use(protect);
 
+// Rate limiter for report generation — max 3 submissions per user per 10 minutes.
+// Keyed on user ID (set by the protect middleware) so it is not bypassable by
+// spoofing a different IP or rotating through proxies.
+const analyzeRateLimit = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 3,
+  keyGenerator: (req) => req.user?.id || req.ip,
+  handler: (_req, res) => {
+    res.status(429).json({
+      success: false,
+      message:
+        'Too many report generation requests. Please wait a few minutes before trying again.'
+    });
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 // @route   POST /api/mental-health/analyze
 // @desc    Analyze mental health data and generate report
 // @access  Private
-router.post('/analyze', analyzeMentalHealth);
+router.post('/analyze', analyzeRateLimit, analyzeMentalHealth);
 
 // @route   GET /api/mental-health/reports
 // @desc    Get user's mental health reports
