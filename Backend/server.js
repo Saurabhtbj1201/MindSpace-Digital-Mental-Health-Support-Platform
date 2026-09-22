@@ -59,7 +59,7 @@ app.use(express.json({ limit: '2mb' }));
 
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 // Configure CORS to allow requests from multiple frontend origins
