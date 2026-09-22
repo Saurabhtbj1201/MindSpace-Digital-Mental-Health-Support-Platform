@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
+    defaults:
+      run:
+        working-directory: ./Backend
 
     steps:
       - uses: actions/checkout@v4
@@ -28,12 +31,13 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+        working-directory: ./Backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./Backend
 
   deploy:
     runs-on: ubuntu-latest
