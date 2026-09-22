@@ -51,13 +51,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9B9E9CD78CE345099E3D7A43106345C8 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F650B4B90B904B8186CADB72AA90FF08 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8B4A0BAD84A74CBCBEBA74A0145439C7 }}
+
+      - name: Enable and start App Service
+        shell: bash
+        run: |
+          resource_group="$(az webapp list --query "[?name=='mindspace1'].resourceGroup | [0]" --output tsv)"
+          if [ -z "$resource_group" ]; then
+            echo "Could not find resource group for App Service mindspace1" >&2
+            exit 1
+          fi
+          az webapp update --resource-group "$resource_group" --name mindspace1 --set enabled=true
+          az webapp start --resource-group "$resource_group" --name mindspace1
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -66,4 +77,3 @@ jobs:
           app-name: 'mindspace1'
           slot-name: 'Production'
           package: .
-          
