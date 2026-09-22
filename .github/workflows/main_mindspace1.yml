@@ -1,0 +1,80 @@
+name: Build and deploy Backend to Azure Web App - mindspace1
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Backend
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: Backend
+        run: npm test
+
+      - name: Prepare deployment package
+        run: |
+          npm prune --omit=dev --prefix Backend
+          Remove-Item -Recurse -Force Backend/MoodModel
+        shell: pwsh
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mindspace1-backend
+          path: Backend
+          if-no-files-found: error
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mindspace1-backend
+          path: Backend
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9B9E9CD78CE345099E3D7A43106345C8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F650B4B90B904B8186CADB72AA90FF08 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8B4A0BAD84A74CBCBEBA74A0145439C7 }}
+
+      - name: Deploy backend to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: mindspace1
+          slot-name: Production
+          package: Backend
+
+      - name: Verify deployed backend health
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 10 --retry-delay 10 --retry-connrefused \
+            https://mindspace1.azurewebsites.net/health
