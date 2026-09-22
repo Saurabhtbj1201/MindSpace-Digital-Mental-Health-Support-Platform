@@ -77,4 +77,4 @@ jobs:
         run: |
           curl --fail --silent --show-error --location \
             --retry 10 --retry-delay 10 --retry-connrefused \
-            https://mindspace1.azurewebsites.net/health
+            https://mindspace1-byf9eghcfvexgjh7.centralindia-01.azurewebsites.net/health
